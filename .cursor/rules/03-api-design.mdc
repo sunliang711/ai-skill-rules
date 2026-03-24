@@ -1,0 +1,128 @@
+---
+description: API 接口设计规范 — 编辑 Controller 层代码时激活
+globs: "**/controller/**/*.java, **/web/**/*.java"
+alwaysApply: false
+# 适用工具: 任意 AI 编码助手。globs 字段供支持自动匹配的工具使用（如 Cursor）
+# 不支持 globs 的工具：在涉及 Controller/API 开发的对话中手动引用本文件
+---
+
+# API 接口设计规范
+
+---
+
+## 一、统一响应格式
+
+所有接口必须使用统一的响应封装结构，**禁止直接返回裸数据**：
+
+```json
+{
+  "code": 200,
+  "message": "success",
+  "data": {},
+  "traceId": "a1b2c3d4-e5f6-7890"
+}
+```
+
+### 响应码约定
+
+| code | 含义 | 使用场景 |
+|------|------|----------|
+| 200 | 成功 | 请求正常处理完毕 |
+| 400 | 参数错误 | 入参校验失败 |
+| 401 | 未认证 | Token 缺失或无效 |
+| 403 | 无权限 | 已认证但无操作权限 |
+| 429 | 请求过于频繁 | 触发速率限制 |
+| 500 | 系统错误 | 服务端未预期异常 |
+
+- 业务错误码使用 6 位数字（如 `100001`），与 HTTP 状态码区分
+- `message` 字段仅返回面向用户的友好提示，禁止泄露技术细节
+- `traceId` 用于全链路追踪，便于排查问题
+
+## 二、入参校验
+
+### 2.1 强制校验
+- 所有外部输入（请求参数 / Header / Cookie / 路径变量）必须校验
+- Controller 方法的请求体参数必须标注 `@Valid` 或 `@Validated`
+- 路径变量和查询参数使用 `@NotNull`、`@NotBlank`、`@Min`、`@Max` 等注解
+
+### 2.2 自定义校验
+- 复杂业务规则使用自定义校验注解（如金额精度、地址格式、手机号格式）
+- 自定义校验器实现 `ConstraintValidator` 接口
+- 校验错误信息使用中文，明确告知用户哪个字段、什么问题
+
+### 2.3 分页参数限制
+- 所有分页查询接口必须对 `pageSize` 设置上限
+- 推荐配置: `MAX_PAGE_SIZE = 500`
+- 当请求的 `pageSize` 超过上限时，自动降级为上限值或返回参数错误
+- `pageNum / pageNo` 从 1 开始（不是 0）
+
+```java
+// ✅ 正确示例
+@Min(value = 1, message = "页码最小为1")
+private Integer pageNum = 1;
+
+@Min(value = 1, message = "每页条数最小为1")
+@Max(value = 500, message = "每页条数最大为500")
+private Integer pageSize = 20;
+```
+
+## 三、HTTP 方法语义
+
+| 操作 | HTTP 方法 | 幂等性 | 示例 |
+|------|-----------|:---:|------|
+| 查询 | GET | ✅ | `GET /api/v1/users/{id}` |
+| 创建 | POST | ❌ | `POST /api/v1/users` |
+| 全量更新 | PUT | ✅ | `PUT /api/v1/users/{id}` |
+| 部分更新 | PATCH | ✅ | `PATCH /api/v1/users/{id}` |
+| 删除 | DELETE | ✅ | `DELETE /api/v1/users/{id}` |
+
+- **所有会修改服务端状态的操作必须使用 POST / PUT / PATCH / DELETE**，禁止用 GET 触发数据变更
+- 批量操作使用 POST，请求体为数组: `POST /api/v1/users/batch-delete`
+
+## 四、版本管理
+
+- 接口版本号放在路径中: `/api/v1/xxx`、`/api/v2/xxx`
+- 版本升级时旧版本至少保留一个迭代周期
+- 废弃接口使用 `@Deprecated` 标注并在响应头中添加 `Sunset` 头
+
+## 五、异常处理
+
+### 5.1 全局异常处理器
+- 使用 `@RestControllerAdvice` + `@ExceptionHandler` 统一处理
+- 所有异常最终都必须经过全局处理器，禁止在 Controller 中 try-catch 后直接返回
+
+### 5.2 异常分类处理
+
+```java
+// 参数校验异常 → 400
+@ExceptionHandler(MethodArgumentNotValidException.class)
+public Result<?> handleValidation(MethodArgumentNotValidException e) {
+    String msg = e.getBindingResult().getFieldErrors().stream()
+        .map(FieldError::getDefaultMessage)
+        .collect(Collectors.joining("; "));
+    return Result.fail(400, msg);
+}
+
+// 业务异常 → 业务错误码
+// 注意: BusinessException 的 message 必须是预定义的面向用户的友好文案
+// 禁止在构造 BusinessException 时传入系统内部信息（如 SQL 错误、类名等）
+@ExceptionHandler(BusinessException.class)
+public Result<?> handleBusiness(BusinessException e) {
+    log.warn("业务异常: code={}, msg={}", e.getCode(), e.getMessage());
+    return Result.fail(e.getCode(), e.getMessage());
+}
+
+// 未知异常 → 500（脱敏处理）
+@ExceptionHandler(Exception.class)
+public Result<?> handleUnknown(Exception e) {
+    log.error("系统异常: traceId={}", MDC.get("traceId"), e);
+    return Result.fail(500, "系统繁忙，请稍后再试");  // 禁止返回 e.getMessage()
+}
+```
+
+## 六、接口文档
+
+- 所有对外接口必须使用 Swagger / SpringDoc 注解标注
+- `@Operation(summary = "接口名称")` — 每个方法必须有
+- `@Schema(description = "字段说明")` — DTO 每个字段必须有
+- 接口文档仅在开发/测试环境开启，**生产环境必须关闭**

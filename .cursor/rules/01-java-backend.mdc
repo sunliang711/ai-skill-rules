@@ -1,0 +1,100 @@
+---
+description: Java/Spring Boot 后端编码与架构规范 — 编辑 Java 文件时激活
+globs: "**/*.java"
+alwaysApply: false
+# 适用工具: 任意 AI 编码助手。globs 字段供支持自动匹配的工具使用（如 Cursor）
+# 不支持 globs 的工具：在涉及 Java 编码的对话中手动引用本文件
+---
+
+# Java 后端编码与架构规范
+
+---
+
+## 一、分层架构
+
+- **强制分层**: Controller → Service → Repository → Entity/DTO，严禁跨层调用
+- Controller 层只做参数校验与响应封装，**禁止包含任何业务逻辑**
+- Service 层承载业务逻辑，事务边界通过 `@Transactional` 在 Service 层控制
+- Repository 层只做数据访问，**禁止包含业务判断**
+- DTO 与 Entity 严格分离，**禁止将 Entity 直接暴露给 Controller 层**
+- 跨 Service 调用应通过接口注入，禁止 Service 之间的循环依赖
+
+## 二、命名规范
+
+### 2.1 包命名
+- 全小写: `com.{company}.{module}.{layer}`
+- 示例: `com.example.order.service`、`com.example.user.controller`
+
+### 2.2 类命名（PascalCase）
+
+| 类型 | 命名规则 | 示例 |
+|------|----------|------|
+| Controller | `XxxController` | `UserController` |
+| Service 接口 | `XxxService` | `UserService` |
+| Service 实现 | `XxxServiceImpl` | `UserServiceImpl` |
+| Repository | `XxxRepository` / `XxxMapper` | `UserRepository` |
+| 请求 DTO | `XxxReqDTO` / `XxxRequest` | `CreateUserReqDTO` |
+| 响应 DTO | `XxxRespDTO` / `XxxResponse` | `UserDetailRespDTO` |
+| Entity | `XxxEntity` / `XxxDO` | `UserEntity` |
+| 枚举 | `XxxEnum` | `OrderStatusEnum` |
+| 常量类 | `XxxConstants` | `SystemConstants` |
+| 配置类 | `XxxConfig` | `RedisConfig` |
+| 工具类 | `XxxUtil` / `XxxUtils` | `DateUtil` |
+| 异常类 | `XxxException` | `BusinessException` |
+
+### 2.3 方法命名（camelCase）
+
+| 操作类型 | 前缀 | 示例 |
+|----------|------|------|
+| 单条查询 | `getXxx` | `getUserById` |
+| 列表查询 | `listXxx` | `listUsersByDept` |
+| 分页查询 | `pageXxx` | `pageOrders` |
+| 新增 | `createXxx` / `addXxx` | `createUser` |
+| 更新 | `updateXxx` | `updateUserStatus` |
+| 删除 | `deleteXxx` / `removeXxx` | `deleteUserById` |
+| 统计 | `countXxx` | `countActiveUsers` |
+| 判断 | `isXxx` / `hasXxx` / `canXxx` | `isExpired` |
+
+- **禁止使用否定命名**（如 `isNotValid`），应改为 `isInvalid` 或反转逻辑使用 `isValid`
+
+### 2.4 常量命名
+- 全大写，下划线分隔: `MAX_PAGE_SIZE`、`DEFAULT_TIMEOUT_MS`
+- 禁止魔法数字，所有硬编码数值必须提取为常量并加注释说明含义
+
+## 三、REST API 路径规范
+
+- 格式: `/api/v{n}/{resource}`
+- 全小写，多单词用连字符分隔: `/api/v1/trade-orders`
+- 资源名使用复数形式: `/api/v1/users`（不是 `/api/v1/user`）
+- 嵌套资源最多两层: `/api/v1/users/{id}/orders`
+- 禁止在路径中暴露实现细节（如 `/api/v1/getUserList`）
+
+## 四、编码质量基线
+
+### 4.1 空安全
+- 方法入参如可能为 null，首行必须做空检查
+- 集合操作前检查非空（`CollectionUtils.isEmpty()`）
+- 优先使用 `Optional` 替代 null 返回值
+
+### 4.2 资源管理
+- 数据库连接、I/O 流、网络连接等必须使用 try-with-resources 自动关闭
+- 禁止在 finally 块中进行业务逻辑处理
+
+### 4.3 并发安全
+- 共享可变状态必须使用线程安全容器或加锁保护
+- 禁止在 Controller/Service 的成员变量中存储请求级别的状态
+- `SimpleDateFormat` 等非线程安全类禁止作为类成员变量共享
+
+### 4.4 日志规范
+- 统一使用 SLF4J 接口: `private static final Logger log = LoggerFactory.getLogger(Xxx.class);`
+- 或使用 Lombok `@Slf4j` 注解
+- **生产代码严禁 `System.out.println()` / `System.err.println()`**
+- 日志使用参数化占位符: `log.info("用户登录: userId={}", userId);`
+- 禁止字符串拼接: ~~`log.info("用户登录: " + userId);`~~
+
+### 4.5 事务管理
+- `@Transactional` 只加在 Service 层的 public 方法上，**禁止加在 Controller 或 private 方法上**
+- 只读查询方法标注 `@Transactional(readOnly = true)`，优化数据库连接分配
+- 默认只回滚 `RuntimeException`，如需回滚受检异常需显式声明: `@Transactional(rollbackFor = Exception.class)`
+- 同一个类内部方法互调不会触发事务代理，**禁止在同类中通过 `this.methodB()` 期望 methodB 的事务生效**
+- 长事务操作（批量导入、大量写入）应拆分为小事务分批提交，避免锁表

@@ -1,0 +1,129 @@
+---
+description: 安全红线规范 — 编辑 Java 代码或配置文件时激活，违反即阻断
+globs: "**/*.java, **/*.yml, **/*.yaml, **/*.properties"
+alwaysApply: false
+# 适用工具: 任意 AI 编码助手。globs 字段供支持自动匹配的工具使用（如 Cursor）
+# 不支持 globs 的工具：在涉及代码编写或配置修改的对话中手动引用本文件
+---
+
+# 安全红线规范
+
+> 🔴 以下规则为强制安全基线，**违反任何一条即视为严重安全事故**。
+> AI 在生成、修改、审查代码时必须逐条遵守。
+
+---
+
+## 一、加密与密钥安全
+
+### 1.1 加密算法
+- 对称加密**只用** AES-256-GCM，**禁止** AES-CBC / AES-ECB / AES-CTR
+- IV / Nonce 必须随机生成且**不可复用**
+- 非对称加密使用 RSA-2048+（OAEP padding）或 ECC P-256+
+- 签名验签使用 HMAC-SHA256 或 RSA-SHA256，**禁止自研签名算法**
+
+### 1.2 密码哈希
+- 密码存储**只用** BCrypt（cost ≥ 12）或 Argon2id
+- **禁止** MD5 / SHA-1 / SHA-256 直接哈希密码
+- 禁止使用固定盐值（salt），必须为每个密码随机生成独立盐值
+
+### 1.3 密钥管理
+- 生产密钥必须存储在 KMS / Vault / HSM 中
+- **禁止代码或配置文件中明文存储密钥、密码、Token、API Key**
+- `application.yml` 中敏感字段必须使用 `${ENV_VAR}` 占位符，禁止明文
+- 判断标准：文件提交到 Git 后是否会泄露任何认证或解密信息
+
+## 二、认证与授权
+
+### 2.1 Token 安全
+- JWT 签名**只用** RS256 / ES256，**禁止** HS256（对称密钥泄露风险）、**禁止** `alg: none`
+- Access Token 有效期 ≤ 30min，Refresh Token ≤ 7d，支持服务端主动吊销
+- 临时令牌有效期 ≤ 5min，一次性使用，用后即销毁
+- **禁止在 URL Query String 中传递 Token 或敏感参数**
+
+### 2.2 接口防护
+- **所有 API 必须经过认证**，使用 Spring Security Filter Chain 或全局拦截器统一拦截
+- **强制白名单机制**：严禁使用 `excludePathPatterns` 放行公开接口（黑名单模式存在绕过风险）
+- 公开接口必须在 Controller 或方法层通过专项注解（如 `@PermitAll`）显式声明
+- 未声明权限注解的接口，默认拒绝访问（Default Deny）
+
+### 2.3 敏感操作保护
+- 权限控制使用 RBAC，关键操作（资金操作 / 修改密码 / 绑定二次验证）需二次验证
+- 密码校验、验证码获取等接口必须配备独立速率限制（如 10次/60秒），超限返回 HTTP 429
+
+## 三、日志安全
+
+### 3.1 禁止记录的内容
+日志中**绝对禁止输出以下信息**：
+- 密码、密钥、PIN、私钥明文
+- 完整的 JWT Token
+- 手机号、邮箱、身份证号、银行卡号（如需记录，必须脱敏）
+- 完整的请求/响应体（如需记录，必须过滤敏感字段）
+- 数据库连接字符串、RPC 地址中的认证信息
+
+### 3.2 脱敏规范
+- 所有用户敏感信息日志输出必须使用统一的脱敏工具类
+- 手机号: `138****5678`、邮箱: `u***@example.com`、身份证: `110***********1234`
+- 含密码/密钥的 DTO，`toString()` 中对应字段返回 `[REDACTED]`
+
+### 3.3 日志级别
+- 生产环境默认 INFO 级别，**禁止开启 DEBUG / TRACE**
+- 框架级 DEBUG 日志必须通过配置精确控制，禁止全局开启
+
+## 四、注入防护
+
+### 4.1 SQL 注入
+- **全部使用参数化查询**：MyBatis `#{}` / JPA Named Parameter
+- **禁止 `${}` 拼接用户输入到 SQL / HQL 中**
+- 禁止字符串拼接构建 SQL 语句
+
+### 4.2 其他注入
+- NoSQL（Redis / MongoDB）: Key 和查询条件禁止直接拼接用户输入
+- SSRF 防护: 外部传入的 URL 必须白名单校验，禁止访问内网地址（10.x / 172.16-31.x / 192.168.x / 127.x）
+- XML 解析: 禁用外部实体（XXE），强制设置 `disallow-doctype-decl`
+- 反序列化: 禁止 Java 原生反序列化处理外部输入，使用 Jackson 并配置类型白名单
+
+## 五、传输安全
+
+- 服务间通信强制 TLS 1.2+，**禁止 TLS 1.0 / TLS 1.1 和 SSL**
+- 对外 API 网关强制 HTTPS，HSTS `max-age ≥ 31536000`
+- **禁止信任所有证书**（`TrustAllCerts`），**禁止关闭主机名校验**
+- 生产环境核心内部服务间推荐开启 mTLS 双向认证
+
+## 六、生产环境暴露面收敛
+
+### 6.1 调试工具隔离
+- 构建生产包时，必须隔离或通过配置彻底关闭 Swagger / OpenAPI 文档接口
+- 至少确保 `springdoc.api-docs.enabled=false`、`springdoc.swagger-ui.enabled=false`
+
+### 6.2 Actuator 管控
+- **严禁** `management.endpoints.web.exposure.include=*`
+- 生产环境仅暴露 `/health`（供健康检查）、`/prometheus`（供监控采集，需内网隔离）
+- **绝对禁止暴露** `/env`（泄露全量环境变量和配置）、`/heapdump`（泄露内存数据）
+- 推荐将管理端口与业务端口分离（如业务 8080、管理 9090），管理端口仅允许内网访问
+
+## 七、依赖安全
+
+### 7.1 JSON 库限制
+- 项目统一使用 **Jackson** 作为 JSON 序列化/反序列化框架
+- **禁止引入 `fastjson` / `fastjson2`**（历史反序列化漏洞频发，供应链攻击风险高）
+- 如传递依赖间接引入了 fastjson，必须在 `pom.xml` 中通过 `<exclusion>` 显式排除
+
+### 7.2 版本红线
+- **禁止生产环境使用 SNAPSHOT / Alpha / Beta / RC 版本的依赖**
+- 同一依赖家族（如 Jackson、Netty、Spring Cloud）必须通过 BOM（Bill of Materials）统一管理版本，避免传递冲突
+- 定期检查依赖漏洞（推荐使用 `mvn dependency-check:check` 或 Snyk）
+
+### 7.3 最小依赖原则
+- 不引入项目未实际使用的依赖
+- `lombok` 使用 `<scope>provided</scope>`
+- 测试依赖使用 `<scope>test</scope>`，禁止带入生产包
+
+## 八、异常处理安全
+
+- `@ExceptionHandler` 全局异常处理器中，**禁止将以下内容返回给前端**：
+  - `e.getMessage()` 原文
+  - 异常堆栈信息
+  - SQL 语句或数据库报错
+  - 框架内部类名或版本信息
+- 所有未预期异常统一返回泛化提示（如 `"系统繁忙，请稍后再试"`）
+- 鉴权失败不返回具体原因（如 "Token 已过期" / "签名格式错误"），统一返回 "认证失败"
