@@ -98,3 +98,13 @@ alwaysApply: false
 - 默认只回滚 `RuntimeException`，如需回滚受检异常需显式声明: `@Transactional(rollbackFor = Exception.class)`
 - 同一个类内部方法互调不会触发事务代理，**禁止在同类中通过 `this.methodB()` 期望 methodB 的事务生效**
 - 长事务操作（批量导入、大量写入）应拆分为小事务分批提交，避免锁表
+
+### 4.6 金额处理
+- 金额/余额/手续费**必须使用 `BigDecimal`**，**禁止 `double` / `float`**
+- 构造 BigDecimal 使用字符串: `new BigDecimal("0.01")`，**禁止** `new BigDecimal(0.01)`（浮点精度丢失）
+- 金额比较使用 `compareTo()`，**禁止** `equals()`（`equals` 区分 scale）
+
+### 4.7 敏感数据清除
+- 密钥、PIN、助记词等敏感数据使用 `byte[]` 或 `char[]` 传递，**禁止使用 `String`**（String 不可变，无法主动清除内存）
+- 使用后必须立即 `Arrays.fill(key, (byte) 0)` 或 `Arrays.fill(pin, '\0')` 清零
+- 含敏感字段的 DTO，`toString()` 中对应字段返回 `[REDACTED]`
