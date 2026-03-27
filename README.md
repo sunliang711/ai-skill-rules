@@ -1,117 +1,132 @@
-# Exchange Cold Wallet Backend — AI 开发框架文档
+# AI Rules, Skills, and Workflows
 
-> 本目录是 `.agents/` 和 `~/.gemini/GEMINI.md` 中实际生效的约束、规范、Skills、Workflows 的**存档副本**，
-> 供团队成员查阅和了解 AI 辅助开发框架的完整内容。
+本仓库用于维护团队的 AI 协作规范体系，包括规则文件、技能 SOP、工作流定义与配套说明文档。
+
+它的目标不是存放业务代码，而是沉淀一套可复用的 AI 开发方法，让 Cursor 或其他 AI 编码助手在不同项目里保持一致的行为方式、审查标准与交付流程。
 
 ---
 
-## ⚡ Workflows（工作流 — 斜杠命令触发）
+## 仓库内容
 
-通过 `/命令名` 快捷触发执行，每个 workflow 会自动串联所需的 skills。
+### 1. Rules
 
-| 命令 | 职责 |
+`rules/` 目录存放通用规则与语言/场景专项规范：
+
+| 文件 | 作用 |
 |------|------|
-| `/feature-dev` | 完整开发流程：需求澄清 → 方案设计 → 方案辩论 → 编码 → 审阅 → 编译 → 自检 → 提交 |
-| `/bug-fix` | Bug 修复流程：信息收集 → 问题定位 → 修复实施 → 编译 → 自检 → 提交 |
-| `/code-review` | 代码评审流程：确认范围 → 三维度审查（安全/规范/质量） → 输出报告 |
-| `/deploy-doc` | 部署文档生成：确认变更 → 提取配置/环境变量/SQL → 生成部署清单 |
-| `/testing` | 测试生成流程：确认范围 → 设计用例 → 编写测试 → 运行验证 |
+| [`rules/00-global.mdc`](rules/00-global.mdc) | 全局沟通、最小变更原则、工作流程基线 |
+| [`rules/01-java-backend.mdc`](rules/01-java-backend.mdc) | Java 后端分层架构、命名、编码质量规范 |
+| [`rules/02-go-backend.mdc`](rules/02-go-backend.mdc) | Go 后端项目结构、Fx、Viper、Zerolog 等规范 |
+| [`rules/02-security.mdc`](rules/02-security.mdc) | 安全红线：密钥、认证、日志、注入、传输与依赖安全 |
+| [`rules/03-api-design.mdc`](rules/03-api-design.mdc) | API 统一响应、参数校验、HTTP 语义、异常处理 |
+
+### 2. Skills
+
+`skills/` 目录存放可被 AI 按需调用的 SOP：
+
+| Skill | 作用 |
+|------|------|
+| [`skills/requirement-clarify/SKILL.md`](skills/requirement-clarify/SKILL.md) | 需求澄清协议，作为其他流程的前置环节 |
+| [`skills/feature-dev/SKILL.md`](skills/feature-dev/SKILL.md) | 功能开发流程 |
+| [`skills/bug-fix/SKILL.md`](skills/bug-fix/SKILL.md) | Bug 修复流程 |
+| [`skills/code-review/SKILL.md`](skills/code-review/SKILL.md) | 安全、规范、质量三维度代码评审 |
+| [`skills/testing/SKILL.md`](skills/testing/SKILL.md) | 单元测试/集成测试编写流程 |
+| [`skills/deploy-doc/SKILL.md`](skills/deploy-doc/SKILL.md) | 部署文档提取与生成流程 |
+| [`skills/dev-review/SKILL.md`](skills/dev-review/SKILL.md) | 开发或修复完成后自动衔接评审的组合流程 |
+
+### 3. Workflows
+
+`workflows/` 目录存放面向用户触发的工作流说明：
+
+| Workflow | 作用 |
+|------|------|
+| [`workflows/feature-dev.md`](workflows/feature-dev.md) | `/feature-dev` 功能开发流程 |
+| [`workflows/bug-fix.md`](workflows/bug-fix.md) | `/bug-fix` 问题修复流程 |
+| [`workflows/code-review.md`](workflows/code-review.md) | `/code-review` 代码审查流程 |
+| [`workflows/testing.md`](workflows/testing.md) | `/testing` 测试生成流程 |
+| [`workflows/deploy-doc.md`](workflows/deploy-doc.md) | `/deploy-doc` 部署文档生成流程 |
+
+### 4. Docs
+
+`docs/` 目录存放说明文档：
+
+| 文件 | 作用 |
+|------|------|
+| [`docs/ai-dev-workflow.md`](docs/ai-dev-workflow.md) | 面向日常使用者的操作指南 |
+
+### 5. Project-Level Guidance
+
+| 文件 | 作用 |
+|------|------|
+| [`AGENTS.md`](AGENTS.md) | 项目级 AI 协作总纲，描述规则体系、Skill 体系与 Agent 人设 |
+| [`README.md`](README.md) | 本仓库总览索引 |
 
 ---
 
-## 🛠 Skills（技能 — 按需调用）
+## 目录结构
 
-可复用的专项能力模块，被 workflow 自动引用或手动触发。
-
-| 技能 | 职责 | 触发方式 |
-|------|------|---------| 
-| [requirement-clarify](cursor/skills/requirement-clarify/SKILL.md) | 需求澄清协议 — 强制追问机制 | 被所有 workflow 自动引用 |
-| [feature-dev](cursor/skills/feature-dev/SKILL.md) | 功能开发 SOP — 分层编码规范 | `/feature-dev` 或 AI 自动判断 |
-| [bug-fix](cursor/skills/bug-fix/SKILL.md) | Bug 修复 SOP — 定位到验证 | `/bug-fix` 或 AI 自动判断 |
-| [code-review](cursor/skills/code-review/SKILL.md) | 代码评审 SOP — 三维度审查 | `/code-review` 或 AI 自动判断 |
-| [deploy-doc](cursor/skills/deploy-doc/SKILL.md) | 部署文档生成 SOP | `/deploy-doc` 或 AI 自动判断 |
-| [testing](cursor/skills/testing/SKILL.md) | 测试生成 SOP | `/testing` 或 AI 自动判断 |
-
----
-
-## 📏 规范层级
-
-本项目的 AI 编码规范分两层，生效范围从大到小：
-
-| 层级 | 文件 | 生效范围 | 说明 |
-|------|------|---------|------|
-| L1 全局 | `~/.gemini/GEMINI.md` | 所有项目的每次对话（自动注入） | 格式规范 + 安全编码基线精简版 |
-| L2 项目 | `AGENTS.md`（项目根目录） | 本项目（workflow 中引用读取） | 分层架构 + 命名 + API 设计 + 安全红线完整版 |
-
----
-
-## 📁 目录结构
-
-```
-docs/ai-dev-framework/
-├── README.md                            # 本文件 — 总览索引
-│
-├── cursor/                              # 规范与技能（适配 Cursor 等 AI 工具）
-│   ├── rules/                           #   规范文件（.mdc 格式）
-│   │   ├── 00-global.mdc               #     全局强制规范
-│   │   ├── 01-java-backend.mdc         #     Java 后端编码与架构规范
-│   │   ├── 02-security.mdc             #     安全红线规范
-│   │   └── 03-api-design.mdc           #     API 接口设计规范
-│   │
-│   └── skills/                          #   技能（SOP 流程定义）
-│       ├── requirement-clarify/         #     需求澄清协议
-│       │   └── SKILL.md
-│       ├── feature-dev/                 #     功能开发 SOP
-│       │   └── SKILL.md
-│       ├── bug-fix/                     #     Bug 修复 SOP
-│       │   └── SKILL.md
-│       ├── code-review/                 #     代码评审 SOP
-│       │   └── SKILL.md
-│       ├── deploy-doc/                  #     部署文档生成 SOP
-│       │   └── SKILL.md
-│       └── testing/                     #     测试生成 SOP
-│           └── SKILL.md
-│
-├── workflows/                           # 工作流（斜杠命令定义）
-│   ├── feature-dev.md                   #   /feature-dev
-│   ├── bug-fix.md                       #   /bug-fix
-│   ├── code-review.md                   #   /code-review
-│   ├── deploy-doc.md                    #   /deploy-doc
-│   └── testing.md                       #   /testing
-│
-└── docs/                                # 使用文档
-    └── ai-dev-workflow.md              #   日常使用指南
-```
-
----
-
-## 🔗 引用关系
-
-```
-/feature-dev ──→ requirement-clarify (F-01~F-04)
-             ──→ feature-dev Skill (阶段一~三)
-             ──→ AGENTS.md 安全红线 (编码阶段)
-
-/bug-fix ────→ requirement-clarify (B-01~B-03)
-             ──→ bug-fix Skill (阶段一~三)
-             ──→ AGENTS.md 安全红线 (修复阶段)
-
-/code-review ─→ requirement-clarify (R-01~R-02)
-             ──→ AGENTS.md 安全红线 (审查基线)
-             ──→ code-review Skill (三维度审查)
-
-/deploy-doc ──→ requirement-clarify (D-01~D-02)
-             ──→ deploy-doc Skill (提取+生成)
-
-/testing ────→ requirement-clarify (T-01~T-02)
-             ──→ testing Skill (设计+编码)
-             ──→ AGENTS.md 安全红线 (测试编码)
+```text
+.
+├── AGENTS.md
+├── README.md
+├── docs/
+│   └── ai-dev-workflow.md
+├── rules/
+│   ├── 00-global.mdc
+│   ├── 01-java-backend.mdc
+│   ├── 02-go-backend.mdc
+│   ├── 02-security.mdc
+│   └── 03-api-design.mdc
+├── skills/
+│   ├── bug-fix/
+│   │   └── SKILL.md
+│   ├── code-review/
+│   │   └── SKILL.md
+│   ├── deploy-doc/
+│   │   └── SKILL.md
+│   ├── dev-review/
+│   │   └── SKILL.md
+│   ├── feature-dev/
+│   │   └── SKILL.md
+│   ├── requirement-clarify/
+│   │   └── SKILL.md
+│   └── testing/
+│       └── SKILL.md
+└── workflows/
+    ├── bug-fix.md
+    ├── code-review.md
+    ├── deploy-doc.md
+    ├── feature-dev.md
+    └── testing.md
 ```
 
 ---
 
-## 📅 同步记录
+## 典型使用方式
 
-| 日期 | 同步内容 |
-|------|----------|
-| 2026-03-24 | 从 `.agents/` 和 `~/.gemini/GEMINI.md` 完整同步所有 skills、workflows、规范文件 |
+### 在 Cursor 类工具中
+
+1. 项目根目录的 `AGENTS.md` 作为项目级上下文。
+2. `rules/*.mdc` 作为可复用规则文件，按工具能力决定是自动加载还是手动引用。
+3. `skills/*/SKILL.md` 用于定义 AI 在特定任务下应遵循的 SOP。
+4. `workflows/*.md` 用于定义面向用户的触发入口与执行顺序。
+
+### 常见任务映射
+
+| 任务 | 推荐入口 | 依赖关系 |
+|------|----------|----------|
+| 开发新功能 | `/feature-dev` | `requirement-clarify` -> `feature-dev` |
+| 修复问题 | `/bug-fix` | `requirement-clarify` -> `bug-fix` |
+| 审查代码 | `/code-review` | `requirement-clarify` -> `code-review` |
+| 编写测试 | `/testing` | `requirement-clarify` -> `testing` |
+| 生成部署文档 | `/deploy-doc` | `requirement-clarify` -> `deploy-doc` |
+| 开发并自动评审 | 自然语言触发或组合请求 | `feature-dev`/`bug-fix` -> `dev-review` -> `code-review` |
+
+---
+
+## 维护建议
+
+- 新增规则时，优先放入 `rules/`，并在 `AGENTS.md` 中补充索引关系。
+- 新增技能时，使用独立目录并提供清晰的 `SKILL.md` 说明。
+- 新增工作流时，应明确前置 Skill、执行顺序和退出条件。
+- 修改规则或 SOP 后，同步更新本 `README.md`，避免目录说明失效。
