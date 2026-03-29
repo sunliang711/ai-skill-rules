@@ -16,9 +16,11 @@
 |------|------|
 | [`rules/00-global.mdc`](rules/00-global.mdc) | 全局沟通、最小变更原则、工作流程基线 |
 | [`rules/01-java-backend.mdc`](rules/01-java-backend.mdc) | Java 后端分层架构、命名、编码质量规范 |
-| [`rules/02-go-backend.mdc`](rules/02-go-backend.mdc) | Go 后端项目结构、Fx、Viper、Zerolog 等规范 |
-| [`rules/02-security.mdc`](rules/02-security.mdc) | 安全红线：密钥、认证、日志、注入、传输与依赖安全 |
-| [`rules/03-api-design.mdc`](rules/03-api-design.mdc) | API 统一响应、参数校验、HTTP 语义、异常处理 |
+| [`rules/02-java-security.mdc`](rules/02-java-security.mdc) | Java/Spring 安全红线：密钥、认证、日志、注入、传输与依赖安全 |
+| [`rules/03-java-api-design.mdc`](rules/03-java-api-design.mdc) | Java/Spring API 统一响应、参数校验、HTTP 语义、异常处理 |
+| [`rules/04-go-backend.mdc`](rules/04-go-backend.mdc) | Go 后端项目结构、Fx、Viper、Zerolog、GORM 等规范 |
+| [`rules/05-go-security.mdc`](rules/05-go-security.mdc) | Go 安全红线：密钥、鉴权、日志、注入、传输与依赖安全 |
+| [`rules/06-go-api-design.mdc`](rules/06-go-api-design.mdc) | Go API 统一响应、参数校验、HTTP 语义、错误处理与接口文档 |
 
 ### 2. Skills
 
@@ -26,13 +28,21 @@
 
 | Skill | 作用 |
 |------|------|
-| [`skills/requirement-clarify/SKILL.md`](skills/requirement-clarify/SKILL.md) | 需求澄清协议，作为其他流程的前置环节 |
-| [`skills/feature-dev/SKILL.md`](skills/feature-dev/SKILL.md) | 功能开发流程 |
-| [`skills/bug-fix/SKILL.md`](skills/bug-fix/SKILL.md) | Bug 修复流程 |
-| [`skills/code-review/SKILL.md`](skills/code-review/SKILL.md) | 安全、规范、质量三维度代码评审 |
-| [`skills/testing/SKILL.md`](skills/testing/SKILL.md) | 单元测试/集成测试编写流程 |
-| [`skills/deploy-doc/SKILL.md`](skills/deploy-doc/SKILL.md) | 部署文档提取与生成流程 |
-| [`skills/dev-review/SKILL.md`](skills/dev-review/SKILL.md) | 开发或修复完成后自动衔接评审的组合流程 |
+| [`skills/requirement-clarify-java/SKILL.md`](skills/requirement-clarify-java/SKILL.md) | Java 需求澄清协议，作为 Java 流程的前置环节 |
+| [`skills/feature-dev-java/SKILL.md`](skills/feature-dev-java/SKILL.md) | Java 功能开发流程 |
+| [`skills/bug-fix-java/SKILL.md`](skills/bug-fix-java/SKILL.md) | Java Bug 修复流程 |
+| [`skills/refactor-java/SKILL.md`](skills/refactor-java/SKILL.md) | Java 代码重构流程 |
+| [`skills/code-review-java/SKILL.md`](skills/code-review-java/SKILL.md) | Java 安全、规范、质量三维度代码评审 |
+| [`skills/testing-java/SKILL.md`](skills/testing-java/SKILL.md) | Java 单元测试/集成测试编写流程 |
+| [`skills/deploy-doc-java/SKILL.md`](skills/deploy-doc-java/SKILL.md) | Java 部署文档提取与生成流程 |
+| [`skills/dev-review-java/SKILL.md`](skills/dev-review-java/SKILL.md) | Java 开发或修复完成后自动衔接评审的组合流程 |
+| [`skills/feature-dev-go/SKILL.md`](skills/feature-dev-go/SKILL.md) | Go 功能开发流程 |
+| [`skills/bug-fix-go/SKILL.md`](skills/bug-fix-go/SKILL.md) | Go Bug 修复流程 |
+| [`skills/refactor-go/SKILL.md`](skills/refactor-go/SKILL.md) | Go 代码重构流程 |
+| [`skills/code-review-go/SKILL.md`](skills/code-review-go/SKILL.md) | Go 安全、规范、质量三维度代码评审 |
+| [`skills/testing-go/SKILL.md`](skills/testing-go/SKILL.md) | Go 单元测试/集成测试编写流程 |
+| [`skills/deploy-doc-go/SKILL.md`](skills/deploy-doc-go/SKILL.md) | Go 部署文档提取与生成流程 |
+| [`skills/dev-review-go/SKILL.md`](skills/dev-review-go/SKILL.md) | Go 开发或修复完成后自动衔接评审的组合流程 |
 
 ### 3. Workflows
 
@@ -74,23 +84,43 @@
 ├── rules/
 │   ├── 00-global.mdc
 │   ├── 01-java-backend.mdc
-│   ├── 02-go-backend.mdc
-│   ├── 02-security.mdc
-│   └── 03-api-design.mdc
+│   ├── 02-java-security.mdc
+│   ├── 03-java-api-design.mdc
+│   ├── 04-go-backend.mdc
+│   ├── 05-go-security.mdc
+│   └── 06-go-api-design.mdc
 ├── skills/
-│   ├── bug-fix/
+│   ├── bug-fix-java/
 │   │   └── SKILL.md
-│   ├── code-review/
+│   ├── code-review-java/
 │   │   └── SKILL.md
-│   ├── deploy-doc/
+│   ├── deploy-doc-java/
 │   │   └── SKILL.md
-│   ├── dev-review/
+│   ├── dev-review-java/
 │   │   └── SKILL.md
-│   ├── feature-dev/
+│   ├── feature-dev-java/
 │   │   └── SKILL.md
-│   ├── requirement-clarify/
+│   ├── refactor-java/
 │   │   └── SKILL.md
-│   └── testing/
+│   ├── requirement-clarify-java/
+│   │   └── SKILL.md
+│   ├── testing-java/
+│   │   └── SKILL.md
+│   ├── bug-fix-go/
+│   │   └── SKILL.md
+│   ├── code-review-go/
+│   │   └── SKILL.md
+│   ├── deploy-doc-go/
+│   │   └── SKILL.md
+│   ├── dev-review-go/
+│   │   └── SKILL.md
+│   ├── feature-dev-go/
+│   │   └── SKILL.md
+│   ├── refactor-go/
+│   │   └── SKILL.md
+│   ├── requirement-clarify-go/
+│   │   └── SKILL.md
+│   └── testing-go/
 │       └── SKILL.md
 └── workflows/
     ├── bug-fix.md
@@ -115,12 +145,12 @@
 
 | 任务 | 推荐入口 | 依赖关系 |
 |------|----------|----------|
-| 开发新功能 | `/feature-dev` | `requirement-clarify` -> `feature-dev` |
-| 修复问题 | `/bug-fix` | `requirement-clarify` -> `bug-fix` |
-| 审查代码 | `/code-review` | `requirement-clarify` -> `code-review` |
-| 编写测试 | `/testing` | `requirement-clarify` -> `testing` |
-| 生成部署文档 | `/deploy-doc` | `requirement-clarify` -> `deploy-doc` |
-| 开发并自动评审 | 自然语言触发或组合请求 | `feature-dev`/`bug-fix` -> `dev-review` -> `code-review` |
+| 开发新功能（Java） | `/feature-dev-java` | `requirement-clarify-java` -> `feature-dev-java` |
+| 修复问题（Java） | `/bug-fix-java` | `requirement-clarify-java` -> `bug-fix-java` |
+| 审查代码（Java） | `/code-review-java` | `requirement-clarify-java` -> `code-review-java` |
+| 编写测试（Java） | `/testing-java` | `requirement-clarify-java` -> `testing-java` |
+| 生成部署文档（Java） | `/deploy-doc-java` | `requirement-clarify-java` -> `deploy-doc-java` |
+| 开发并自动评审（Java） | 自然语言触发或组合请求 | `feature-dev-java`/`bug-fix-java` -> `dev-review-java` -> `code-review-java` |
 
 ---
 

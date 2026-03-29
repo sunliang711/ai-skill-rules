@@ -1,6 +1,6 @@
 ---
-name: dev-review
-description: 开发+评审组合流程 — 在 feature-dev 或 bug-fix 完成后自动衔接 code-review。当用户提出"开发并评审"、"修复并review"、"做完帮我review"等包含开发与评审意图的请求时使用
+name: dev-review-java
+description: Java 开发+评审组合流程 — 在 feature-dev-java 或 bug-fix-java 完成后自动衔接 code-review-java。当用户提出“开发并评审”、“修复并review”、“做完帮我review”等包含开发与评审意图的请求时使用
 ---
 
 # 开发 + 评审组合流程
@@ -27,13 +27,13 @@ description: 开发+评审组合流程 — 在 feature-dev 或 bug-fix 完成后
 
 根据用户请求判断属于哪种类型：
 
-- **功能开发类**（"开发"、"实现"、"新增"） → 执行 `feature-dev` Skill 的完整流程
-- **Bug 修复类**（"修复"、"bug"、"排查"、"异常"） → 执行 `bug-fix` Skill 的完整流程
+- **功能开发类**（"开发"、"实现"、"新增"） → 执行 `feature-dev-java` Skill 的完整流程
+- **Bug 修复类**（"修复"、"bug"、"排查"、"异常"） → 执行 `bug-fix-java` Skill 的完整流程
 
 ### 步骤 2：完整执行对应 Skill
 
 严格按照对应 Skill 定义的全部阶段执行，**不得跳过任何步骤**，包括：
-- 前置需求澄清（`requirement-clarify`）
+- 前置需求澄清（`requirement-clarify-java`）
 - 方案设计 / 问题定位（需等待用户确认）
 - 编码实现 / 修复实施
 - **单元测试（强制，测试全部通过后方可继续）**
@@ -72,9 +72,9 @@ description: 开发+评审组合流程 — 在 feature-dev 或 bug-fix 完成后
 
 ### 步骤 5：跳过评审需求澄清
 
-由于审查范围和业务背景已在开发/修复阶段完全确定，**跳过 `requirement-clarify` 中 code-review 的追问环节**，直接将以下信息视为已确认：
+由于审查范围和业务背景已在开发/修复阶段完全确定，**跳过 `requirement-clarify-java` 中 code-review-java 的追问环节**，直接将以下信息视为已确认：
 
-| code-review 必问项 | 来源 |
+| code-review-java 必问项 | 来源 |
 |:---:|------|
 | R-01 审查范围 | 阶段一记录的变更文件清单 |
 | R-02 代码业务背景 | 阶段一的需求描述和方案设计 |
@@ -85,16 +85,16 @@ description: 开发+评审组合流程 — 在 feature-dev 或 bug-fix 完成后
 
 ### 步骤 6：执行三维度审查
 
-严格按照 `code-review` Skill 的**步骤 2（三维度系统审查）** 执行：
+严格按照 `code-review-java` Skill 的**步骤 2（三维度系统审查）** 执行：
 
-1. **以 `.cursor/rules/02-security.mdc` 安全红线规范**作为审查基线
+1. **以 `.cursor/rules/02-java-security.mdc` 安全红线规范**作为审查基线
 2. 按安全审查（🔴）→ 规范审查（🟡）→ 质量审查（🟢）顺序逐项检查
 3. 每个检查项给出 ✅ 或 ❌ 判定
 4. **审查范围限定为本次变更的文件**，不审查未变更的代码
 
 ### 步骤 7：输出审查报告
 
-按照 `code-review` Skill 的**步骤 3** 格式输出完整审查报告。
+按照 `code-review-java` Skill 的**步骤 3** 格式输出完整审查报告。
 
 ### 步骤 8：问题处理
 
@@ -134,7 +134,7 @@ description: 开发+评审组合流程 — 在 feature-dev 或 bug-fix 完成后
 
 > ⚠️ **必须在所有步骤完成后执行**，使用 Write 工具将文档写入 `docs/` 目录。
 > 
-> **注意**：dev-review 流程生成**一份合并文档**，涵盖开发/修复和评审两个阶段的全部信息，**不再**由子 Skill（feature-dev / bug-fix / code-review）各自单独生成文档。
+> **注意**：dev-review-java 流程生成**一份合并文档**，涵盖开发/修复和评审两个阶段的全部信息，**不再**由子 Skill（feature-dev-java / bug-fix-java / code-review-java）各自单独生成文档。
 
 文件命名规则：`docs/{YYYY-MM-DD}-dev-review-{功能或问题简称}.md`（简称用英文小写短横线分隔，如 `user-register`、`fix-login-npe`）。
 
@@ -146,7 +146,7 @@ description: 开发+评审组合流程 — 在 feature-dev 或 bug-fix 完成后
 ## 基本信息
 - **任务类型**: [功能开发 + 代码评审 / Bug 修复 + 代码评审]
 - **执行日期**: YYYY-MM-DD
-- **执行 Skill**: dev-review（feature-dev/bug-fix + code-review）
+- **执行 Skill**: dev-review-java（feature-dev-java/bug-fix-java + code-review-java）
 
 ---
 
