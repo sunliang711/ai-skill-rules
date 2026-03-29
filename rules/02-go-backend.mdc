@@ -12,38 +12,22 @@ alwaysApply: false
 
 ## 〇、技术栈
 
-| 领域 | 首选方案 |
-|------|----------|
-| 依赖注入 | Uber Fx (`go.uber.org/fx`) |
-| HTTP 框架 | Gin (`github.com/gin-gonic/gin`) |
-| 日志 | Zerolog (`github.com/rs/zerolog`) |
-| 配置管理 | Viper (`github.com/spf13/viper`) |
-| ORM | GORM (`gorm.io/gorm`) |
-| 参数校验 | Validator (`github.com/go-playground/validator/v10`) |
-
-- 新功能优先使用上述技术栈，禁止在无充分理由的情况下引入同类替代库
+- 依赖注入：Uber Fx (`go.uber.org/fx`)
+- HTTP：Gin (`github.com/gin-gonic/gin`)
+- 日志：Zerolog (`github.com/rs/zerolog`)
+- 配置管理：Viper (`github.com/spf13/viper`)
+- ORM：GORM (`gorm.io/gorm`)
+- 参数校验：Validator (`github.com/go-playground/validator/v10`)
+- 新功能优先使用上述技术栈，禁止无充分理由引入同类替代库
 - 如需引入新依赖，必须先向用户说明理由并获得确认
 
 ## 一、项目结构
 
-```
-project/
-├── cmd/                  # 入口，每个可执行程序一个子目录
-│   └── server/
-│       └── main.go       # 仅负责 fx.New() 启动，禁止业务逻辑
-├── internal/             # 私有代码，禁止被外部项目引用
-│   ├── handler/          # HTTP Handler（等同 Controller）
-│   ├── service/          # 业务逻辑层
-│   ├── repo/             # 数据访问层（Repository）
-│   ├── model/            # 数据库模型（Entity）
-│   ├── dto/              # 请求/响应结构体
-│   ├── middleware/        # Gin 中间件
-│   └── pkg/              # 项目内公共工具
-├── config/               # 配置文件（YAML/TOML）
-└── pkg/                  # 可被外部引用的公共库（谨慎使用）
-```
-
+- 推荐结构：`cmd/`、`internal/`、`config/`、`pkg/`
+- 推荐目录：`internal/handler`、`service`、`repo`、`model`、`dto`、`middleware`、`pkg`
+- `cmd/*/main.go` 仅负责应用启动，禁止承载业务逻辑
 - **强制分层**: Handler → Service → Repository → Model/DTO，严禁跨层调用
+- `handler/service/repo/model/dto` 为推荐目录命名，可按业务域调整，但职责边界必须保持一致
 - Handler 层只做参数绑定、校验与响应封装，**禁止包含任何业务逻辑**
 - Service 层承载业务逻辑与事务控制
 - Repository 层只做数据访问，**禁止包含业务判断**
@@ -53,58 +37,19 @@ project/
 
 - 所有层的依赖通过 Fx 构造函数注入，禁止全局变量或 `init()` 隐式初始化
 - 每层通过 `fx.Provide` 注册，通过 `fx.Invoke` 触发启动逻辑
-- Handler/Service/Repository 均使用结构体 + 构造函数模式：
-
-```go
-type UserService struct {
-    repo *repo.UserRepo
-    log  zerolog.Logger
-}
-
-func NewUserService(repo *repo.UserRepo, log zerolog.Logger) *UserService {
-    return &UserService{repo: repo, log: log}
-}
-```
-
-- 禁止在构造函数中执行有副作用的操作（如连接数据库），应通过 `fx.Lifecycle` 的 `OnStart`/`OnStop` 钩子管理
+- Handler/Service/Repository 均使用结构体 + 构造函数模式
+- 禁止在构造函数中执行有副作用的操作；连接初始化、监听启动、资源释放统一通过 `fx.Lifecycle` 管理
 
 ## 三、命名规范
 
-### 3.1 包命名
+### 3.1 包与类型
 - 全小写、简短、无下划线: `handler`、`service`、`repo`
 - 包名不重复路径信息: `internal/service`（不是 `internal/servicepackage`）
-
-### 3.2 类型命名（PascalCase / camelCase）
-
-| 类型 | 命名规则 | 示例 |
-|------|----------|------|
-| Handler | `XxxHandler` | `UserHandler` |
-| Service | `XxxService` | `UserService` |
-| Repository | `XxxRepo` | `UserRepo` |
-| 请求 DTO | `XxxReq` | `CreateUserReq` |
-| 响应 DTO | `XxxResp` | `UserDetailResp` |
-| 数据库 Model | `Xxx`（对应表名） | `User`、`Order` |
-| 接口 | 动词/行为描述，不加 `I` 前缀 | `UserStore`、`Notifier` |
-| 常量 | `PascalCase`（导出）/ `camelCase`（未导出） | `MaxPageSize`、`defaultTimeout` |
-| 错误变量 | `Err` 前缀 | `ErrUserNotFound` |
-
-### 3.3 方法命名（PascalCase / camelCase）
-
-| 操作类型 | 前缀 | 示例 |
-|----------|------|------|
-| 单条查询 | `GetXxx` | `GetUserByID` |
-| 列表查询 | `ListXxx` | `ListUsersByDept` |
-| 分页查询 | `PageXxx` | `PageOrders` |
-| 新增 | `CreateXxx` | `CreateUser` |
-| 更新 | `UpdateXxx` | `UpdateUserStatus` |
-| 删除 | `DeleteXxx` | `DeleteUserByID` |
-| 统计 | `CountXxx` | `CountActiveUsers` |
-| 判断 | `IsXxx` / `HasXxx` / `CanXxx` | `IsExpired` |
-
+- 类型命名：`XxxHandler`、`XxxService`、`XxxRepo`、`XxxReq`、`XxxResp`、`ErrXxx`
+- Repository 接口优先使用行为命名，如 `UserStore`；`XxxRepo` 优先用于具体实现
+- 方法前缀统一使用 `Get`、`List`、`Page`、`Create`、`Update`、`Delete`、`Count`、`Is`、`Has`、`Can`
 - ID 全大写: `UserID`（不是 `UserId`），URL、HTTP 同理
 - **禁止使用否定命名**（如 `IsNotValid`），应改为 `IsInvalid` 或反转逻辑使用 `IsValid`
-
-### 3.4 常量与变量
 - 导出常量 `PascalCase`: `MaxPageSize`、`DefaultTimeoutMS`
 - 未导出常量 `camelCase`: `maxRetries`、`defaultBatchSize`
 - 禁止魔法数字，所有硬编码数值必须提取为常量并加注释说明含义
@@ -118,57 +63,22 @@ func NewUserService(repo *repo.UserRepo, log zerolog.Logger) *UserService {
 - 禁止在路径中暴露实现细节（如 `/api/v1/getUserList`）
 - Gin 路由按模块分组注册，每个 Handler 提供 `RegisterRoutes(rg *gin.RouterGroup)` 方法
 
-## 五、配置管理（Viper）
+## 五、配置管理（Source Chain + Viper + Fx）
 
-### 5.1 优先级（从低到高）
-1. **Defaults** — 代码中 `viper.SetDefault()` 设定的默认值
-2. **File** — 配置文件（`config.yaml` / `config.toml`）
-3. **Env** — 环境变量，高优先级覆盖文件配置
-
-### 5.2 规范
-- 环境变量统一前缀: `APP_`，层级用 `_` 分隔（如 `APP_DB_HOST`）
-- 配置结构体化: 定义 `Config` 结构体并通过 `viper.Unmarshal()` 映射
-- 敏感配置（密码、密钥）**禁止写入配置文件**，必须通过环境变量注入
-- 配置加载逻辑集中在一处，通过 Fx 注入分发，禁止多处 `viper.Get*()` 散落调用
-
-```go
-type Config struct {
-    Server ServerConfig `mapstructure:"server"`
-    DB     DBConfig     `mapstructure:"db"`
-}
-
-func LoadConfig() (*Config, error) {
-    viper.SetDefault("server.port", 8080)
-    viper.SetConfigName("config")
-    viper.AddConfigPath("./config")
-    viper.SetEnvPrefix("APP")
-    viper.AutomaticEnv()
-    viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-    // ...
-}
-```
+- 配置统一使用 **Source Chain + Viper + Fx** 模式，集中在 `config` 包加载，业务代码**禁止**散落调用 `viper.Get*()`
+- 配置优先级固定为：代码默认值 < `config.toml` < `private.toml` < 环境变量；后者覆盖前者
+- 默认值统一在配置入口声明；新增配置项时必须同步更新配置结构、默认值和校验逻辑
+- 配置通过 Fx 注入；下游模块只依赖自己需要的子配置，避免直接依赖整个 `*Config`
+- 配置校验通过独立校验函数处理，`config` 包不直接耦合具体 validator 实现
+- `config.toml` 为基础配置；`private.toml` 用于敏感配置覆盖，可选且建议加入 `.gitignore`
+- 新增配置来源时，优先扩展配置源抽象，**禁止**在加载流程中写分支特判
 
 ## 六、日志规范（Zerolog）
 
-### 6.1 初始化
 - 全局 Logger 通过 Fx 注入，禁止 `log.Logger` 全局变量散落使用
 - 各层通过构造函数接收 `zerolog.Logger`，可附加子 Logger 标记来源
-
-### 6.2 Caller 路径格式
 - 日志中的调用者路径**最多保留两级**: `handler/user.go:42`
-- 通过 `zerolog.CallerMarshalFunc` 自定义裁剪:
-
-```go
-zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
-    parts := strings.Split(file, "/")
-    if len(parts) > 2 {
-        file = strings.Join(parts[len(parts)-2:], "/")
-    }
-    return file + ":" + strconv.Itoa(line)
-}
-```
-
-### 6.3 使用规范
+- 通过 `zerolog.CallerMarshalFunc` 自定义裁剪
 - 结构化字段优先: `log.Info().Str("userID", id).Msg("用户登录")`
 - **禁止字符串拼接**: ~~`log.Info().Msg("用户登录: " + id)`~~
 - **禁止 `fmt.Println()` / `log.Println()`** 出现在生产代码中
@@ -180,21 +90,10 @@ zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
 - JSON 字段统一 `snake_case`: `json:"user_id"`
 - GORM 字段统一 `snake_case`: `gorm:"column:user_id"`
 - Viper 映射统一 `snake_case`: `mapstructure:"max_open_conns"`
-- Gin 绑定/校验 tag: `binding:"required"` 或 `validate:"required,min=1"`
+- Gin 请求 DTO 优先使用 `binding`；非 HTTP 场景或复用结构可使用 `validate`；同一字段避免同时混用两套校验 tag
 - 多个 tag 按固定顺序排列: `json` → `gorm` → `mapstructure` → `binding`/`validate`
 - 不对外暴露的字段使用 `json:"-"` 显式排除，禁止依赖未导出字段隐式忽略
 - 时间字段指定格式: `time_format:"2006-01-02T15:04:05Z07:00"`（需要时）
-
-```go
-type User struct {
-    ID        uint            `json:"id"         gorm:"primaryKey"`
-    Name      string          `json:"name"       gorm:"column:name"       binding:"required"`
-    Email     string          `json:"email"       gorm:"column:email"      validate:"required,email"`
-    Balance   decimal.Decimal `json:"balance"    gorm:"column:balance;type:decimal(20,8)"`
-    Password  string          `json:"-"          gorm:"column:password"`
-    CreatedAt time.Time       `json:"created_at" gorm:"autoCreateTime"`
-}
-```
 
 ## 八、编码质量基线
 
@@ -205,7 +104,7 @@ type User struct {
 - 在 Handler 层统一返回标准错误响应，禁止 Service 层直接写 HTTP 响应
 
 ### 8.2 参数校验（Validator）
-- 请求 DTO 使用 struct tag 校验: `binding:"required"` (Gin) / `validate:"required,min=1"`
+- Gin 请求 DTO 优先使用 `binding`；非 HTTP 场景或复用结构可使用 `validate`；同一字段避免同时混用两套校验 tag
 - 复杂校验逻辑封装为自定义 Validator 并注册
 - 校验错误统一在 Handler 层转换为用户友好的错误消息
 
@@ -216,22 +115,9 @@ type User struct {
 - 使用 `context.Context` 传递请求作用域的值和取消信号
 
 ### 8.4 数据库操作（GORM）
-
-#### 连接池配置
-- 连接建立后**必须**通过 `database/sql` 层设置连接池参数，禁止使用默认值裸跑:
-
-```go
-sqlDB, _ := db.DB()
-sqlDB.SetMaxOpenConns(100)          // 最大打开连接数，根据实际负载调整
-sqlDB.SetMaxIdleConns(10)           // 最大空闲连接数
-sqlDB.SetConnMaxLifetime(time.Hour) // 连接最大存活时间，避免使用已被服务端关闭的连接
-sqlDB.SetConnMaxIdleTime(10 * time.Minute) // 空闲连接最大存活时间
-```
-
-- 以上参数必须从配置（Viper）中读取，禁止硬编码
+- 连接建立后**必须**通过 `database/sql` 层设置连接池参数，禁止使用默认值裸跑
+- 以上参数必须从配置注入读取，禁止硬编码
 - 生产环境必须配置 `ConnMaxLifetime`，防止数据库侧主动断开导致 `broken pipe`
-
-#### 操作规范
 - 查询必须指定超时 context: `db.WithContext(ctx)`
 - 批量操作使用 `CreateInBatches`，禁止一次性插入大量数据
 - 事务使用 `db.Transaction(func(tx *gorm.DB) error { ... })`，禁止手动 `Begin`/`Commit` 散落
@@ -240,25 +126,8 @@ sqlDB.SetConnMaxIdleTime(10 * time.Minute) // 空闲连接最大存活时间
 
 ### 8.5 Redis 连接管理
 
-- 使用 `go-redis/redis/v9`，连接建立后**必须**配置连接池参数:
-
-```go
-rdb := redis.NewClient(&redis.Options{
-    Addr:            cfg.Redis.Addr,
-    Password:        cfg.Redis.Password,
-    DB:              cfg.Redis.DB,
-    PoolSize:        cfg.Redis.PoolSize,        // 最大连接数，默认 runtime.GOMAXPROCS * 10
-    MinIdleConns:    cfg.Redis.MinIdleConns,     // 最小空闲连接数
-    MaxIdleConns:    cfg.Redis.MaxIdleConns,     // 最大空闲连接数
-    ConnMaxIdleTime: cfg.Redis.ConnMaxIdleTime,  // 空闲连接超时
-    ConnMaxLifetime: cfg.Redis.ConnMaxLifetime,  // 连接最大存活时间
-    DialTimeout:     cfg.Redis.DialTimeout,      // 建连超时
-    ReadTimeout:     cfg.Redis.ReadTimeout,       // 读超时
-    WriteTimeout:    cfg.Redis.WriteTimeout,      // 写超时
-})
-```
-
-- 所有连接池和超时参数必须从配置（Viper）中读取，禁止硬编码
+- 使用 `go-redis/redis/v9`，连接建立后**必须**配置连接池参数
+- 所有连接池和超时参数必须从配置注入读取，禁止硬编码
 - 连接初始化后必须 `Ping(ctx)` 验证连通性，失败则启动中止
 - Redis 客户端通过 Fx 注入分发，禁止多处自行创建连接
 
@@ -273,23 +142,7 @@ rdb := redis.NewClient(&redis.Options{
 
 ## 九、优雅关停（Graceful Shutdown）
 
-- HTTP Server 必须通过 `fx.Lifecycle` 注册 `OnStart`/`OnStop` 钩子:
-
-```go
-func RegisterHTTPServer(lc fx.Lifecycle, engine *gin.Engine, cfg *Config) {
-    srv := &http.Server{Addr: cfg.Server.Addr, Handler: engine}
-    lc.Append(fx.Hook{
-        OnStart: func(ctx context.Context) error {
-            go srv.ListenAndServe()
-            return nil
-        },
-        OnStop: func(ctx context.Context) error {
-            return srv.Shutdown(ctx)
-        },
-    })
-}
-```
-
+- HTTP Server 必须通过 `fx.Lifecycle` 注册 `OnStart`/`OnStop` 钩子
 - `OnStop` 中 Gin Server 调用 `Shutdown(ctx)` 等待在途请求完成，禁止 `Close()` 强杀
 - 数据库、Redis 等外部连接在 `OnStop` 中按**依赖反序**关闭（Fx 自动处理注册顺序）
 - `OnStop` 的 context 有超时限制（Fx 默认 15s），长耗时清理操作需评估是否足够
@@ -303,26 +156,7 @@ func RegisterHTTPServer(lc fx.Lifecycle, engine *gin.Engine, cfg *Config) {
 - 测试辅助函数/fixtures 放在 `testutil/` 或 `testdata/` 目录
 
 ### 10.2 表驱动测试
-- 优先使用表驱动（Table-Driven）风格，每个 case 包含 `name`、输入、期望输出:
-
-```go
-func TestGetUserByID(t *testing.T) {
-    tests := []struct {
-        name    string
-        id      uint
-        want    *dto.UserResp
-        wantErr bool
-    }{
-        {name: "正常查询", id: 1, want: &dto.UserResp{ID: 1, Name: "test"}, wantErr: false},
-        {name: "用户不存在", id: 999, want: nil, wantErr: true},
-    }
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            // ...
-        })
-    }
-}
-```
+- 优先使用表驱动（Table-Driven）风格，每个 case 至少包含 `name`、输入和期望输出
 
 ### 10.3 Mock 与依赖隔离
 - Service 层依赖 Repository **接口**，测试时通过 mock 实现替换
