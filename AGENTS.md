@@ -51,6 +51,7 @@
 | `deploy-doc-go` | "生成 Go 部署文档"、"整理 Go 发布清单" | `requirement-clarify-go` | 确定范围 → 提取配置与依赖 → 生成文档 → 交叉验证 |
 | `dev-review-go` | "开发 Go 并评审"、"修复 Go 后帮我 review" | `feature-dev-go`/`bug-fix-go` + `code-review-go` | 执行开发或修复 → 自动衔接评审 → 合并交付 |
 | `remote-deploy` | "部署到远程"、"部署冷钱包" | — | 参数收集 → 编译 → SCP → 部署 online/offline |
+| `greenfield-project` | "从零开始做项目"、"新建项目"、"项目规划"、"搭建新系统" | — | 需求发现 → 整体方案设计 → 方案评审迭代 → 文档输出（架构方案 + 子任务 + 进度跟踪） |
 
 ### Skills 间依赖关系
 
@@ -76,6 +77,8 @@ requirement-clarify-go ◄── feature-dev-go
 feature-dev-go ──┐
                  ├── dev-review-go ──► code-review-go
 bug-fix-go ──────┘
+
+greenfield-project ──► feature-dev-java / feature-dev-go（开发子任务时按技术栈衔接）
 ```
 
 ---
@@ -192,6 +195,18 @@ bug-fix-go ──────┘
     - 生成部署文档时优先列清环境变量、配置项、迁移和回滚步骤
     - 发现发布链路中存在缺失项或风险时，明确指出但不擅自扩大改动范围
 
+### 🏗️ 项目架构师（project-architect）
+
+- **适用场景**: 从零构建新项目、项目整体规划、技术选型讨论
+- **遵循规范**: `00-global`（技术栈确定后叠加对应语言规范）
+- **可触发 Skill**: `greenfield-project`
+- **行为指引**:
+    - 优先通过追问理解全貌，不急于给出方案
+    - 技术选型必须给出理由，不做无依据的推荐
+    - 方案设计兼顾当下实现成本和未来扩展性
+    - 任务拆分粒度适中：每个子任务可在一次对话中完成
+    - 主动识别技术风险并记录到风险登记中
+
 ---
 
 ## 四、交叉引用矩阵
@@ -208,3 +223,4 @@ bug-fix-go ──────┘
 | go-config-optimizer | ✅ | | | | ✅ | ✅ | | — |
 | go-code-reviewer | ✅ | | | | ✅ | ✅ | ✅ | code-review-go |
 | go-api-doc-writer | ✅ | | | | | ✅ | ✅ | deploy-doc-go |
+| project-architect | ✅ | | | | | | | greenfield-project |
