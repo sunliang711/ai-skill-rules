@@ -70,6 +70,13 @@ read_agents_md_generic() {
         | sed 's|\.mdc|.md|g'
 }
 
+read_agents_md_codex() {
+    cat "$AGENTS_MD" \
+        | sed 's|\.cursor/rules/|.codex/rules/|g' \
+        | sed 's|\.cursor/skills/|.codex/skills/|g' \
+        | sed 's|\.mdc|.md|g'
+}
+
 ensure_dir() {
     mkdir -p "$1"
 }
@@ -172,12 +179,12 @@ REFS
 }
 
 generate_codex() {
-    echo -e "${YELLOW}[Codex] Generating AGENTS.md + .agents/rules/ ...${NC}"
+    echo -e "${YELLOW}[Codex] Generating AGENTS.md + .codex/rules/ + .codex/skills/ ...${NC}"
 
     local out_file="$TARGET_DIR/AGENTS.md"
-    read_agents_md_generic > "$out_file"
+    read_agents_md_codex > "$out_file"
 
-    local out_rules="$TARGET_DIR/.agents/rules"
+    local out_rules="$TARGET_DIR/.codex/rules"
     ensure_dir "$out_rules"
 
     for rule in "$RULES_DIR"/*.mdc; do
@@ -185,8 +192,12 @@ generate_codex() {
         read_rule_content "$rule" > "$out_rules/${base}.md"
     done
 
+    if [ -d "$SKILLS_DIR" ]; then
+        cp -r "$SKILLS_DIR" "$TARGET_DIR/.codex/skills"
+    fi
+
     local count=$(ls -1 "$out_rules" | wc -l | tr -d ' ')
-    echo -e "${GREEN}  -> $out_file + $out_rules ($count rules)${NC}"
+    echo -e "${GREEN}  -> $out_file + $out_rules ($count rules) + .codex/skills${NC}"
 }
 
 generate_antigravity() {

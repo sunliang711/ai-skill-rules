@@ -97,6 +97,15 @@ function Read-AgentsMd-Generic {
     return $content
 }
 
+function Read-AgentsMd-Codex {
+    # Read AGENTS.md and replace Cursor-specific paths with Codex-specific paths
+    $content = Get-Content $AgentsMd -Raw -Encoding UTF8
+    $content = $content -replace '\.cursor/rules/', '.codex/rules/'
+    $content = $content -replace '\.cursor/skills/', '.codex/skills/'
+    $content = $content -replace '\.mdc', '.md'
+    return $content
+}
+
 function Ensure-Dir {
     param([string]$Path)
     if (-not (Test-Path $Path)) {
@@ -206,13 +215,13 @@ function Generate-Claude {
 }
 
 function Generate-Codex {
-    Write-Host "[Codex] Generating AGENTS.md ..." -ForegroundColor Yellow
+    Write-Host "[Codex] Generating AGENTS.md + .codex/rules/ + .codex/skills/ ..." -ForegroundColor Yellow
 
     $outFile = Join-Path $TargetDir "AGENTS.md"
-    $content = Read-AgentsMd-Generic
+    $content = Read-AgentsMd-Codex
 
     # Copy rule files (strip cursor frontmatter, use .md)
-    $outRules = Join-Path $TargetDir ".agents\rules"
+    $outRules = Join-Path $TargetDir ".codex\rules"
     Ensure-Dir $outRules
 
     foreach ($rule in Get-ChildItem "$RulesDir\*.mdc" | Sort-Object Name) {
@@ -221,8 +230,14 @@ function Generate-Codex {
         $body | Set-Content (Join-Path $outRules $mdName) -Encoding UTF8
     }
 
+    # Skills
+    $outSkills = Join-Path $TargetDir ".codex\skills"
+    if (Test-Path $SkillsDir) {
+        Copy-Item $SkillsDir $outSkills -Recurse -Force
+    }
+
     $content | Set-Content $outFile -Encoding UTF8
-    Write-Host "  -> $outFile + $outRules ($(( Get-ChildItem $outRules).Count) rules)" -ForegroundColor Green
+    Write-Host "  -> $outFile + $outRules ($(( Get-ChildItem $outRules).Count) rules) + .codex\skills" -ForegroundColor Green
 }
 
 function Generate-Antigravity {
