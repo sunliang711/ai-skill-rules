@@ -51,7 +51,7 @@
 | `deploy-doc-go` | "生成 Go 部署文档"、"整理 Go 发布清单" | `requirement-clarify-go` | 确定范围 → 提取配置与依赖 → 生成文档 → 交叉验证 |
 | `dev-review-go` | "开发 Go 并评审"、"修复 Go 后帮我 review" | `feature-dev-go`/`bug-fix-go` + `code-review-go` | 执行开发或修复 → 自动衔接评审 → 合并交付 |
 | `remote-deploy` | "部署到远程"、"部署冷钱包" | — | 参数收集 → 编译 → SCP → 部署 online/offline |
-| `greenfield-project` | "从零开始做项目"、"新建项目"、"项目规划"、"搭建新系统" | — | 需求发现 → 整体方案设计 → 方案评审迭代 → 文档输出（架构方案 + 子任务 + 进度跟踪） |
+| `greenfield-project` | "从零开始做项目"、"新建项目"、"项目规划"、"搭建新系统" | — | 需求发现 → 整体方案设计（技术栈确定后加载对应语言 Rules） → 方案评审迭代 → 文档输出（架构方案 + 子任务 + 进度跟踪 + 基于 Rules 的编码规范） |
 
 ### Skills 间依赖关系
 
@@ -223,4 +223,6 @@ greenfield-project ──► feature-dev-java / feature-dev-go（开发子任务
 | go-config-optimizer | ✅ | | | | ✅ | ✅ | | — |
 | go-code-reviewer | ✅ | | | | ✅ | ✅ | ✅ | code-review-go |
 | go-api-doc-writer | ✅ | | | | | ✅ | ✅ | deploy-doc-go |
-| project-architect | ✅ | | | | | | | greenfield-project |
+| project-architect | ✅ | 🔄 | 🔄 | 🔄 | 🔄 | 🔄 | 🔄 | greenfield-project |
+
+> ✅ = 始终加载　　🔄 = 技术栈确定后按需加载（见 `greenfield-project` 的「技术栈 → 规则映射」）
