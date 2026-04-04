@@ -114,7 +114,9 @@
 
 ## 五、文件清单
 
-### 实际生效文件（AI 自动读取）
+> 说明：本仓库维护的是规则与 SOP 的源码；通过生成脚本分发到具体项目后，才会出现在 `.agents/`、`.cursor/` 等平台目录中。下面的 `.agents/` 路径均指**目标项目中的生成结果**，不是本仓库当前目录结构。
+
+### 实际生效文件（生成到目标项目后由 AI 自动读取）
 
 | 文件 | 位置 | 作用 |
 |------|------|------|
@@ -137,10 +139,10 @@
 | `deploy-doc.md` | `.agents/workflows/` | `/deploy-doc` |
 | `testing.md` | `.agents/workflows/` | `/testing` |
 
-### 存档副本（本目录）
+### 源文件（本仓库）
 
 | 目录 | 内容 |
 |------|------|
-| `cursor/rules/` | 规范文件存档（适配 Cursor 等工具的 .mdc 格式） |
-| `cursor/skills/` | 技能文件存档 |
+| `rules/` | 规范文件源码（生成后可映射到 `.cursor/rules/`、`.agents/rules/`、`.codex/rules/` 等目录） |
+| `skills/` | 技能文件源码 |
 | `workflows/` | 工作流文件存档 |

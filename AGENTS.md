@@ -3,12 +3,14 @@
 > 本文件是项目 AI 辅助开发的**中枢索引**，定义了规范体系、流程体系和 Agent 人设的全貌及相互关系。
 > 
 > Cursor 会自动将本文件作为 `alwaysApply` 规则加载，无需手动引用。
+>
+> 说明：本仓库是规则/Skills/Workflows 的**源码仓**。仓库内维护的原始目录为 `rules/`、`skills/`、`workflows/`；面向具体 AI 平台使用时，会通过 `tools/generate-for-platform.sh` 或 `tools/generate-for-platform.ps1` 生成到目标项目中的 `.cursor/`、`.agents/`、`.codex/` 等目录。
 
 ---
 
 ## 一、规范体系（Rules）
 
-> 以下规范文件位于 `.cursor/rules/` 目录，根据 `alwaysApply` 和 `globs` 配置自动激活，AI 无需手动引用。
+> 在本仓库中，规则源码位于 `rules/` 目录；生成到 Cursor 目标项目后，对应文件位于 `.cursor/rules/` 目录，并根据 `alwaysApply` 和 `globs` 配置自动激活，AI 无需手动引用。
 
 | 文件 | 适用范围 | 激活方式 | 核心内容 |
 |------|---------|---------|---------|
@@ -30,7 +32,7 @@
 
 ## 二、流程体系（Skills）
 
-> 以下 Skill 位于 `.cursor/skills/` 目录，AI 根据用户意图自动识别并加载对应 SOP。
+> 在本仓库中，Skill 源码位于 `skills/` 目录；生成到 Cursor 目标项目后，对应文件位于 `.cursor/skills/` 目录，AI 根据用户意图自动识别并加载对应 SOP。
 
 | Skill | 触发场景 | 前置依赖 | 核心流程 |
 |-------|---------|---------|---------|
