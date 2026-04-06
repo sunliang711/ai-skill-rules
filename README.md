@@ -2,7 +2,7 @@
 
 本仓库用于维护团队的 AI 协作规范体系，包括规则文件、技能 SOP、工作流定义与配套说明文档。
 
-它的目标不是存放业务代码，而是沉淀一套可复用的 AI 开发方法，让 Cursor 或其他 AI 编码助手在不同项目里保持一致的行为方式、审查标准与交付流程。
+它的目标不是存放业务代码，而是沉淀一套可复用的 AI 开发方法，让 Cursor、Codex、Claude Code 等 AI 编码助手在不同项目里保持一致的行为方式、审查标准与交付流程。
 
 ---
 
@@ -21,6 +21,14 @@
 | [`rules/04-go-backend.mdc`](rules/04-go-backend.mdc) | Go 后端项目结构、Fx、Viper、Zerolog、GORM 等规范 |
 | [`rules/05-go-security.mdc`](rules/05-go-security.mdc) | Go 安全红线：密钥、鉴权、日志、注入、传输与依赖安全 |
 | [`rules/06-go-api-design.mdc`](rules/06-go-api-design.mdc) | Go API 统一响应、参数校验、HTTP 语义、错误处理与接口文档 |
+| [`rules/07-rust-backend.mdc`](rules/07-rust-backend.mdc) | Rust 分层架构、模块边界、异步与错误处理规范 |
+| [`rules/08-rust-security.mdc`](rules/08-rust-security.mdc) | Rust 安全红线：密钥、鉴权、注入、命令执行、传输与依赖安全 |
+| [`rules/09-rust-api-design.mdc`](rules/09-rust-api-design.mdc) | Rust HTTP API 设计、请求响应建模与统一错误处理规范 |
+| [`rules/10-python-backend.mdc`](rules/10-python-backend.mdc) | Python 分层架构、类型标注、异常处理、资源管理与测试规范 |
+| [`rules/11-python-security.mdc`](rules/11-python-security.mdc) | Python 安全红线：密钥、鉴权、注入、命令执行、传输与依赖安全 |
+| [`rules/12-python-api-design.mdc`](rules/12-python-api-design.mdc) | Python HTTP API 设计、请求响应模型与统一错误处理规范 |
+| [`rules/13-shell-scripting.mdc`](rules/13-shell-scripting.mdc) | Shell 脚本结构、参数解析、引用、错误处理与测试规范 |
+| [`rules/14-shell-security.mdc`](rules/14-shell-security.mdc) | Shell 安全红线：命令执行、路径、权限、下载、密钥与破坏性操作保护 |
 
 ### 2. Skills
 
@@ -43,6 +51,9 @@
 | [`skills/testing-go/SKILL.md`](skills/testing-go/SKILL.md) | Go 单元测试/集成测试编写流程 |
 | [`skills/deploy-doc-go/SKILL.md`](skills/deploy-doc-go/SKILL.md) | Go 部署文档提取与生成流程 |
 | [`skills/dev-review-go/SKILL.md`](skills/dev-review-go/SKILL.md) | Go 开发或修复完成后自动衔接评审的组合流程 |
+| `skills/*-rust/` | Rust Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
+| `skills/*-python/` | Python Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
+| `skills/*-shell/` | Shell Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
 
 ### 3. Workflows
 
@@ -130,6 +141,8 @@
     └── testing.md
 ```
 
+> 说明：目录树中为避免过长，省略了 Rust / Python / Shell 新增的 Skill 子目录；它们与 Java / Go 保持相同的命名模式和目录结构。
+
 ---
 
 ## 典型使用方式
@@ -140,6 +153,41 @@
 2. `rules/*.mdc` 作为可复用规则文件，按工具能力决定是自动加载还是手动引用。
 3. `skills/*/SKILL.md` 用于定义 AI 在特定任务下应遵循的 SOP。
 4. `workflows/*.md` 用于定义面向用户的触发入口与执行顺序。
+
+### 全局安装到 Codex / Cursor / Claude Code
+
+本仓库现在同时支持“项目级生成”和“全局安装”两种模式：
+
+1. **项目级生成**
+   - 使用 `tools/generate-for-platform.sh` 或 `tools/generate-for-platform.ps1`
+   - 适合把规则产物输出到某个具体项目目录
+
+2. **全局安装**
+   - 使用 `tools/install-global.sh` 或 `tools/install-global.ps1`
+   - 支持平台：`codex`、`cursor`、`claude`（兼容别名 `claudecode`）
+
+示例：
+
+```bash
+./tools/install-global.sh codex
+./tools/install-global.sh cursor
+./tools/install-global.sh claudecode
+./tools/install-global.sh all
+```
+
+全局安装后的默认落点：
+
+| 平台 | 默认全局目录 | 说明 |
+|------|-------------|------|
+| Codex | `~/.codex` | 安装全局 `AGENTS.md` 区块、规则文档和 Skills |
+| Claude Code | `~/.claude` | 安装全局 `CLAUDE.md` 区块、规则/Skills 文档和 Slash Commands |
+| Cursor | `~/.cursor` | 安装全局 Skills、规则源、User Rules 文本和项目 bootstrap 脚本 |
+
+Cursor 说明：
+
+- Cursor 官方稳定的全局入口是 **User Rules**
+- `globs` 自动激活仍然主要依赖项目内 `.cursor/rules/*.mdc`
+- 因此本仓库对 Cursor 采用“**全局 Skills + 全局规则源 + 项目 bootstrap**”的折中方案
 
 ### 常见任务映射
 
@@ -160,3 +208,4 @@
 - 新增技能时，使用独立目录并提供清晰的 `SKILL.md` 说明。
 - 新增工作流时，应明确前置 Skill、执行顺序和退出条件。
 - 修改规则或 SOP 后，同步更新本 `README.md`，避免目录说明失效。
+- 修改跨平台生成或全局安装逻辑后，优先验证 `tools/generate-for-platform.*` 与 `tools/install-global.*` 的输出结构。

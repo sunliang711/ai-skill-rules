@@ -4,13 +4,19 @@
 > 
 > Cursor 会自动将本文件作为 `alwaysApply` 规则加载，无需手动引用。
 >
-> 说明：本仓库是规则/Skills/Workflows 的**源码仓**。仓库内维护的原始目录为 `rules/`、`skills/`、`workflows/`；面向具体 AI 平台使用时，会通过 `tools/generate-for-platform.sh` 或 `tools/generate-for-platform.ps1` 生成到目标项目中的 `.cursor/`、`.agents/`、`.codex/` 等目录。
+> 说明：本仓库是规则/Skills/Workflows 的**源码仓**。仓库内维护的原始目录为 `rules/`、`skills/`、`workflows/`；面向具体 AI 平台使用时：
+>
+> - 可通过 `tools/generate-for-platform.sh` 或 `tools/generate-for-platform.ps1` 生成到目标项目中的 `.cursor/`、`.agents/`、`.codex/` 等目录
+> - 也可通过 `tools/install-global.sh` 或 `tools/install-global.ps1` 安装到 `~/.codex`、`~/.claude`、`~/.cursor` 等全局目录
 
 ---
 
 ## 一、规范体系（Rules）
 
-> 在本仓库中，规则源码位于 `rules/` 目录；生成到 Cursor 目标项目后，对应文件位于 `.cursor/rules/` 目录，并根据 `alwaysApply` 和 `globs` 配置自动激活，AI 无需手动引用。
+> 在本仓库中，规则源码位于 `rules/` 目录；可按两种方式落地：
+>
+> - **项目级生成**：生成到 Cursor 项目的 `.cursor/rules/` 等目录，并根据 `alwaysApply` 和 `globs` 配置自动激活
+> - **全局安装**：安装到 `~/.codex`、`~/.claude`、`~/.cursor` 下，供对应工具在全局范围复用
 
 | 文件 | 适用范围 | 激活方式 | 核心内容 |
 |------|---------|---------|---------|
@@ -21,18 +27,29 @@
 | `04-go-backend.mdc` | `**/*.go` | 编辑 Go 文件时 | Go 分层架构、依赖注入、错误处理、并发与测试规范 |
 | `05-go-security.mdc` | `**/*.go, **/*.toml, **/.env, **/.env.example, **/Dockerfile` | 编辑 Go 代码或 Go 服务配置时 | 🔴 Go 安全红线：密钥、鉴权、日志、注入、传输与依赖安全 |
 | `06-go-api-design.mdc` | `**/handler/**/*.go, **/router/**/*.go, **/transport/http/**/*.go, **/*handler*.go` | 编辑 Go Handler/API 时 | 统一响应、参数校验、HTTP 语义、错误处理与接口文档 |
+| `07-rust-backend.mdc` | `**/*.rs` | 编辑 Rust 文件时 | Rust 分层架构、模块边界、异步与错误处理规范 |
+| `08-rust-security.mdc` | `**/*.rs, **/Cargo.toml, **/.env, **/.env.example, **/Dockerfile` | 编辑 Rust 代码或 Rust 服务配置时 | 🔴 Rust 安全红线：密钥、鉴权、注入、命令执行、传输与依赖安全 |
+| `09-rust-api-design.mdc` | `**/handler/**/*.rs, **/router/**/*.rs, **/transport/http/**/*.rs, **/*handler*.rs` | 编辑 Rust HTTP/API 代码时 | 路由语义、请求响应建模、错误响应与接口文档 |
+| `10-python-backend.mdc` | `**/*.py` | 编辑 Python 文件时 | Python 分层架构、类型标注、异常处理、资源管理与测试规范 |
+| `11-python-security.mdc` | `**/*.py, **/*.toml, **/*.yml, **/*.yaml, **/.env, **/.env.example, **/Dockerfile` | 编辑 Python 代码或 Python 服务配置时 | 🔴 Python 安全红线：密钥、鉴权、注入、命令执行、传输与依赖安全 |
+| `12-python-api-design.mdc` | `**/api/**/*.py, **/routers/**/*.py, **/views/**/*.py, **/*router*.py` | 编辑 Python HTTP/API 代码时 | 路由语义、请求响应模型、统一错误处理与接口文档 |
+| `13-shell-scripting.mdc` | `**/*.sh, **/*.bash, **/*.zsh` | 编辑 Shell 脚本时 | Shell 脚本结构、参数解析、引用、错误处理与测试规范 |
+| `14-shell-security.mdc` | `**/*.sh, **/*.bash, **/*.zsh, **/.env, **/.env.example, **/Dockerfile` | 编辑 Shell 脚本或相关执行配置时 | 🔴 Shell 安全红线：命令执行、路径、权限、下载、密钥与破坏性操作保护 |
 
 ### 语言规则映射说明
 
 - **Java/Spring 任务** 默认遵循 `01-java-backend.mdc`，并按场景叠加 `02-java-security.mdc` 与 `03-java-api-design.mdc`
 - **Go 后端任务** 默认遵循 `04-go-backend.mdc`，并按场景叠加 `05-go-security.mdc` 与 `06-go-api-design.mdc`
+- **Rust 任务** 默认遵循 `07-rust-backend.mdc`，并按场景叠加 `08-rust-security.mdc` 与 `09-rust-api-design.mdc`
+- **Python 任务** 默认遵循 `10-python-backend.mdc`，并按场景叠加 `11-python-security.mdc` 与 `12-python-api-design.mdc`
+- **Shell 脚本任务** 默认遵循 `13-shell-scripting.mdc`，涉及命令、路径、权限和下载风险时叠加 `14-shell-security.mdc`
 - 除 `00-global.mdc` 外，其余规则均按语言拆分，避免 Java 与 Go 约束混写在同一文件中
 
 ---
 
 ## 二、流程体系（Skills）
 
-> 在本仓库中，Skill 源码位于 `skills/` 目录；生成到 Cursor 目标项目后，对应文件位于 `.cursor/skills/` 目录，AI 根据用户意图自动识别并加载对应 SOP。
+> 在本仓库中，Skill 源码位于 `skills/` 目录；既可以生成到项目目录中的 `.cursor/skills/`、`.codex/skills/` 等位置，也可以安装到工具的全局 Skills 目录中供长期复用。
 
 | Skill | 触发场景 | 前置依赖 | 核心流程 |
 |-------|---------|---------|---------|
@@ -54,6 +71,13 @@
 | `dev-review-go` | "开发 Go 并评审"、"修复 Go 后帮我 review" | `feature-dev-go`/`bug-fix-go` + `code-review-go` | 执行开发或修复 → 自动衔接评审 → 合并交付 |
 | `remote-deploy` | "部署到远程"、"部署冷钱包" | — | 参数收集 → 编译 → SCP → 部署 online/offline |
 | `greenfield-project` | "从零开始做项目"、"新建项目"、"项目规划"、"搭建新系统" | — | 需求发现 → 整体方案设计（技术栈确定后加载对应语言 Rules） → 方案评审迭代 → 文档输出（架构方案 + 子任务 + 进度跟踪 + 基于 Rules 的编码规范） |
+
+### 新增语言 Skill 家族
+
+- **Rust Skill 家族**：`requirement-clarify-rust`、`feature-dev-rust`、`bug-fix-rust`、`refactor-rust`、`code-review-rust`、`testing-rust`、`deploy-doc-rust`、`dev-review-rust`
+- **Python Skill 家族**：`requirement-clarify-python`、`feature-dev-python`、`bug-fix-python`、`refactor-python`、`code-review-python`、`testing-python`、`deploy-doc-python`、`dev-review-python`
+- **Shell Skill 家族**：`requirement-clarify-shell`、`feature-dev-shell`、`bug-fix-shell`、`refactor-shell`、`code-review-shell`、`testing-shell`、`deploy-doc-shell`、`dev-review-shell`
+- 三组新语言 Skill 的依赖模式与 Java / Go 保持一致：`requirement-clarify-*` 作为前置，`dev-review-*` 作为“开发/修复 + review”组合流程
 
 ### Skills 间依赖关系
 
@@ -83,12 +107,27 @@ bug-fix-go ──────┘
 greenfield-project ──► feature-dev-java / feature-dev-go（开发子任务时按技术栈衔接）
 ```
 
+Rust / Python / Shell 依赖模式与上方相同：
+
+```text
+requirement-clarify-rust ◄── feature-dev-rust / bug-fix-rust / refactor-rust / code-review-rust / testing-rust / deploy-doc-rust
+feature-dev-rust / bug-fix-rust ──► dev-review-rust ──► code-review-rust
+
+requirement-clarify-python ◄── feature-dev-python / bug-fix-python / refactor-python / code-review-python / testing-python / deploy-doc-python
+feature-dev-python / bug-fix-python ──► dev-review-python ──► code-review-python
+
+requirement-clarify-shell ◄── feature-dev-shell / bug-fix-shell / refactor-shell / code-review-shell / testing-shell / deploy-doc-shell
+feature-dev-shell / bug-fix-shell ──► dev-review-shell ──► code-review-shell
+```
+
 ---
 
 ## 三、Agent 人设
 
 > 以下人设定义 AI 在不同场景下的行为偏好。
 > 编码规范和安全规范已在 Rules 中定义（见第一章），人设仅补充**角色特有的行为指引**，避免重复。
+>
+> 说明：当前独立 Agent 人设重点覆盖 Java / Go。Rust / Python / Shell 已补齐 Rules 与 Skills，可先复用相同的“开发 / 测试 / 评审”行为模式，后续再按需要细分独立人设。
 
 ### 🧠 Spring 全能开发助手（spring-dev）
 

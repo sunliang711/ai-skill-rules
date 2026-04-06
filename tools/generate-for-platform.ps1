@@ -197,18 +197,26 @@ function Generate-Claude {
     [void]$sb.AppendLine("| Edit Go Code | `.agents/rules/04-go-backend.md` |")
     [void]$sb.AppendLine("| Go Security | `.agents/rules/05-go-security.md` |")
     [void]$sb.AppendLine("| Go Handler/API | `.agents/rules/06-go-api-design.md` |")
+    [void]$sb.AppendLine("| Edit Rust Code | `.agents/rules/07-rust-backend.md` |")
+    [void]$sb.AppendLine("| Rust Security | `.agents/rules/08-rust-security.md` |")
+    [void]$sb.AppendLine("| Rust HTTP/API | `.agents/rules/09-rust-api-design.md` |")
+    [void]$sb.AppendLine("| Edit Python Code | `.agents/rules/10-python-backend.md` |")
+    [void]$sb.AppendLine("| Python Security | `.agents/rules/11-python-security.md` |")
+    [void]$sb.AppendLine("| Python HTTP/API | `.agents/rules/12-python-api-design.md` |")
+    [void]$sb.AppendLine("| Edit Shell Script | `.agents/rules/13-shell-scripting.md` |")
+    [void]$sb.AppendLine("| Shell Security | `.agents/rules/14-shell-security.md` |")
     [void]$sb.AppendLine("")
 
     # SOP references
     [void]$sb.AppendLine("## SOP Workflows (Read As Needed)")
     [void]$sb.AppendLine("")
-    [void]$sb.AppendLine("| Scenario | File to Read |")
+    [void]$sb.AppendLine("| Language | Skill Family |")
     [void]$sb.AppendLine("|----------|-------------|")
-    [void]$sb.AppendLine("| Feature Dev | `.agents/skills/feature-dev-java/SKILL.md` |")
-    [void]$sb.AppendLine("| Bug Fix | `.agents/skills/bug-fix-java/SKILL.md` |")
-    [void]$sb.AppendLine("| Code Review | `.agents/skills/code-review-java/SKILL.md` |")
-    [void]$sb.AppendLine("| Write Tests | `.agents/skills/testing-java/SKILL.md` |")
-    [void]$sb.AppendLine("| Deploy Docs | `.agents/skills/deploy-doc-java/SKILL.md` |")
+    [void]$sb.AppendLine("| Java | `.agents/skills/*-java/SKILL.md` |")
+    [void]$sb.AppendLine("| Go | `.agents/skills/*-go/SKILL.md` |")
+    [void]$sb.AppendLine("| Rust | `.agents/skills/*-rust/SKILL.md` |")
+    [void]$sb.AppendLine("| Python | `.agents/skills/*-python/SKILL.md` |")
+    [void]$sb.AppendLine("| Shell | `.agents/skills/*-shell/SKILL.md` |")
 
     $sb.ToString() | Set-Content $outFile -Encoding UTF8
     Write-Host "  -> $outFile ($([math]::Round((Get-Item $outFile).Length / 1KB, 1)) KB)" -ForegroundColor Green

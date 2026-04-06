@@ -1,0 +1,67 @@
+---
+description: Python 后端编码与架构规范 — 编辑 Python 文件时激活
+globs: "**/*.py"
+alwaysApply: false
+# 适用工具: 任意 AI 编码助手。globs 字段供支持自动匹配的工具使用（如 Cursor）
+# 不支持 globs 的工具：在涉及 Python 编码、重构、审查和测试时手动引用本文件
+---
+
+# Python 后端编码与架构规范
+
+## 一、技术栈基线
+
+- Web API 优先 `FastAPI`
+- 数据建模与输入校验优先 `Pydantic v2`
+- ORM / 数据访问优先 `SQLAlchemy 2.x`
+- 数据库迁移优先 `Alembic`
+- 日志优先 `logging` 结构化封装或项目既有方案
+- 测试优先 `pytest`
+- 新增同类框架或库前必须先说明理由并获得确认
+
+## 二、项目结构
+
+- 推荐目录：`app/api`、`app/service`、`app/repo`、`app/model`、`app/schema`、`app/config`、`tests`
+- API 层只负责参数接收、校验、鉴权衔接和响应封装
+- Service 层承载业务逻辑、事务和跨资源协同
+- Repository / DAO 层只负责数据访问，禁止夹带业务判断
+- Schema / DTO 与 ORM Model 严格分离，禁止直接把 ORM 实体返回给外部接口
+
+## 三、类型与命名
+
+- 新代码优先补充类型注解，禁止大面积无类型裸函数
+- 类名使用 `PascalCase`，函数和变量使用 `snake_case`，常量使用 `UPPER_SNAKE_CASE`
+- 布尔函数命名优先 `is_` / `has_` / `can_`
+- 禁止使用含义模糊的 `data`、`obj`、`tmp` 作为长期变量名
+- 魔法数字必须提取为常量
+
+## 四、异常与资源管理
+
+- 禁止 `except Exception: pass` 或无说明吞错
+- 业务异常与系统异常分层处理，对外错误信息必须脱敏
+- 文件、数据库会话、网络连接使用上下文管理器或统一生命周期管理
+- 异步代码必须明确边界，I/O 密集逻辑可使用 `async`，CPU 密集逻辑不要假异步
+- 禁止在生产代码中随意使用 `print()`
+
+## 五、API 与配置
+
+- API 路由遵循 `/api/v{n}/{resource}` 规范
+- 所有外部输入通过 `Pydantic` 或等价机制校验
+- 配置统一由受控配置层加载，禁止散落 `os.getenv()` 读取核心配置
+- 敏感配置只允许来自环境变量、密钥管理系统或私有配置
+- 日志中禁止输出密码、Token、私钥、完整连接串
+
+## 六、数据访问与并发
+
+- SQL 必须参数化，禁止字符串拼接构造 SQL
+- 事务边界由 Service 或统一会话管理控制，禁止多层嵌套随意提交
+- 查询必须考虑分页、超时和 N+1 风险
+- 后台任务、线程、协程必须有超时、取消或关闭机制
+- 金额和高精度字段使用 `Decimal`
+
+## 七、测试规范
+
+- 单元测试优先隔离外部依赖，使用 `pytest` fixture、mock、fake
+- 覆盖正常路径、错误路径、边界条件和权限/超时场景
+- Web 层测试优先使用 `TestClient` 或项目既有测试客户端
+- 提交前至少运行与变更相关的 `pytest`
+- 若项目启用 `ruff`、`mypy`、`black`、`isort` 等检查，需与项目约定保持一致

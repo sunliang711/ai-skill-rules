@@ -56,7 +56,28 @@ EOF
 # === Helpers ===
 strip_frontmatter() {
     # Remove YAML frontmatter (---\n...\n---\n) from stdin
-    awk 'BEGIN{skip=0; found=0} /^---$/{if(found==0){found=1;skip=1;next}else if(skip==1){skip=0;next}} skip==0{print}' 
+    awk '
+        {
+            sub(/\r$/, "")
+        }
+        BEGIN {
+            skip = 0
+            found = 0
+        }
+        $0 == "---" {
+            if (found == 0) {
+                found = 1
+                skip = 1
+                next
+            } else if (skip == 1) {
+                skip = 0
+                next
+            }
+        }
+        skip == 0 {
+            print
+        }
+    '
 }
 
 read_rule_content() {
@@ -162,16 +183,24 @@ HEADER
 | Edit Go Code | `.agents/rules/04-go-backend.md` |
 | Go Security | `.agents/rules/05-go-security.md` |
 | Go Handler/API | `.agents/rules/06-go-api-design.md` |
+| Edit Rust Code | `.agents/rules/07-rust-backend.md` |
+| Rust Security | `.agents/rules/08-rust-security.md` |
+| Rust HTTP/API | `.agents/rules/09-rust-api-design.md` |
+| Edit Python Code | `.agents/rules/10-python-backend.md` |
+| Python Security | `.agents/rules/11-python-security.md` |
+| Python HTTP/API | `.agents/rules/12-python-api-design.md` |
+| Edit Shell Script | `.agents/rules/13-shell-scripting.md` |
+| Shell Security | `.agents/rules/14-shell-security.md` |
 
 ## SOP Workflows (Read As Needed)
 
-| Scenario | File to Read |
+| Language | Skill Family |
 |----------|-------------|
-| Feature Dev | `.agents/skills/feature-dev-java/SKILL.md` |
-| Bug Fix | `.agents/skills/bug-fix-java/SKILL.md` |
-| Code Review | `.agents/skills/code-review-java/SKILL.md` |
-| Write Tests | `.agents/skills/testing-java/SKILL.md` |
-| Deploy Docs | `.agents/skills/deploy-doc-java/SKILL.md` |
+| Java | `.agents/skills/*-java/SKILL.md` |
+| Go | `.agents/skills/*-go/SKILL.md` |
+| Rust | `.agents/skills/*-rust/SKILL.md` |
+| Python | `.agents/skills/*-python/SKILL.md` |
+| Shell | `.agents/skills/*-shell/SKILL.md` |
 REFS
 
     local size=$(du -k "$out_file" | cut -f1)
