@@ -45,4 +45,4 @@ description: Shell 测试生成流程。用于为 Shell 脚本设计并实现 sh
 ```
 
 ### 步骤 5：任务交付文档
-在 `docs/` 下生成：`docs/{YYYY-MM-DD}-test-shell-{脚本简称}.md`
+在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD}-test-shell-{脚本简称}.md`

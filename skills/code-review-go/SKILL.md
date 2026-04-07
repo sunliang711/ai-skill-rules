@@ -97,7 +97,7 @@ description: Go 代码评审流程。用于评审 Go 后端代码的安全性、
 ```
 
 ## 步骤 5：任务交付文档
-在 `docs/` 下生成：`docs/{YYYY-MM-DD}-review-go-{模块简称}.md`
+在 `docs/review/` 下生成：`docs/review/{YYYY-MM-DD}-review-go-{模块简称}.md`
 
 建议包含：
 - 审查范围

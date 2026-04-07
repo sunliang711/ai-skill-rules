@@ -110,7 +110,7 @@ description: Go 部署文档生成流程。用于从 Go 服务改动中提取配
 - 部署步骤是否符合真实启动方式。
 
 ## 步骤 5：任务交付文档
-在 `docs/` 下生成：`docs/{YYYY-MM-DD}-deploy-go-{功能或版本简称}.md`
+在 `docs/deploy/` 下生成：`docs/deploy/{YYYY-MM-DD}-deploy-go-{功能或版本简称}.md`
 
 建议包含：
 - 变更范围

@@ -43,6 +43,7 @@
 | [`skills/code-review-java/SKILL.md`](skills/code-review-java/SKILL.md) | Java 安全、规范、质量三维度代码评审 |
 | [`skills/testing-java/SKILL.md`](skills/testing-java/SKILL.md) | Java 单元测试/集成测试编写流程 |
 | [`skills/deploy-doc-java/SKILL.md`](skills/deploy-doc-java/SKILL.md) | Java 部署文档提取与生成流程 |
+| [`skills/api-doc-java/SKILL.md`](skills/api-doc-java/SKILL.md) | Java API 文档提取与生成流程，包含字段定义、错误码与 `curl` 示例 |
 | [`skills/dev-review-java/SKILL.md`](skills/dev-review-java/SKILL.md) | Java 开发或修复完成后自动衔接评审的组合流程 |
 | [`skills/feature-dev-go/SKILL.md`](skills/feature-dev-go/SKILL.md) | Go 功能开发流程 |
 | [`skills/feature-dev-go-orchestrated/SKILL.md`](skills/feature-dev-go-orchestrated/SKILL.md) | Go 多 Agent 功能开发编排流程 |
@@ -51,10 +52,11 @@
 | [`skills/code-review-go/SKILL.md`](skills/code-review-go/SKILL.md) | Go 安全、规范、质量三维度代码评审 |
 | [`skills/testing-go/SKILL.md`](skills/testing-go/SKILL.md) | Go 单元测试/集成测试编写流程 |
 | [`skills/deploy-doc-go/SKILL.md`](skills/deploy-doc-go/SKILL.md) | Go 部署文档提取与生成流程 |
+| [`skills/api-doc-go/SKILL.md`](skills/api-doc-go/SKILL.md) | Go API 文档提取与生成流程，包含字段定义、错误码与 `curl` 示例 |
 | [`skills/dev-review-go/SKILL.md`](skills/dev-review-go/SKILL.md) | Go 开发或修复完成后自动衔接评审的组合流程 |
 | [`skills/dev-review-go-orchestrated/SKILL.md`](skills/dev-review-go-orchestrated/SKILL.md) | Go 多 Agent 开发加评审编排流程 |
-| `skills/*-rust/` | Rust Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
-| `skills/*-python/` | Python Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
+| `skills/*-rust/` | Rust Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `api-doc` / `dev-review` |
+| `skills/*-python/` | Python Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `api-doc` / `dev-review` |
 | `skills/*-shell/` | Shell Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
 
 ### 3. Workflows
@@ -68,14 +70,20 @@
 | [`workflows/code-review.md`](workflows/code-review.md) | `/code-review` 代码审查流程 |
 | [`workflows/testing.md`](workflows/testing.md) | `/testing` 测试生成流程 |
 | [`workflows/deploy-doc.md`](workflows/deploy-doc.md) | `/deploy-doc` 部署文档生成流程 |
+| [`workflows/api-doc.md`](workflows/api-doc.md) | `/api-doc` API 文档生成流程 |
 
 ### 4. Docs
 
-`docs/` 目录存放说明文档：
+`docs/` 目录按文档类型分层：
 
-| 文件 | 作用 |
+| 路径 | 作用 |
 |------|------|
-| [`docs/ai-dev-workflow.md`](docs/ai-dev-workflow.md) | 面向日常使用者的操作指南 |
+| `docs/guides/` | 仓库说明、使用指南、工作流类文档 |
+| `docs/api/` | API 文档输出目录 |
+| `docs/deploy/` | 部署文档输出目录 |
+| `docs/delivery/` | 功能开发、修复、重构、测试、联合交付文档输出目录 |
+| `docs/review/` | 代码评审报告输出目录 |
+| [`docs/guides/ai-dev-workflow.md`](docs/guides/ai-dev-workflow.md) | 面向日常使用者的操作指南 |
 
 ### 5. Project-Level Guidance
 
@@ -93,7 +101,12 @@
 ├── AGENTS.md
 ├── README.md
 ├── docs/
-│   └── ai-dev-workflow.md
+│   ├── api/
+│   ├── delivery/
+│   ├── deploy/
+│   ├── guides/
+│   │   └── ai-dev-workflow.md
+│   └── review/
 ├── rules/
 │   ├── 00-global.mdc
 │   ├── 01-java-backend.mdc
@@ -106,6 +119,8 @@
 │   ├── bug-fix-java/
 │   │   └── SKILL.md
 │   ├── code-review-java/
+│   │   └── SKILL.md
+│   ├── api-doc-java/
 │   │   └── SKILL.md
 │   ├── deploy-doc-java/
 │   │   └── SKILL.md
@@ -122,6 +137,8 @@
 │   ├── bug-fix-go/
 │   │   └── SKILL.md
 │   ├── code-review-go/
+│   │   └── SKILL.md
+│   ├── api-doc-go/
 │   │   └── SKILL.md
 │   ├── deploy-doc-go/
 │   │   └── SKILL.md
@@ -142,6 +159,7 @@
 └── workflows/
     ├── bug-fix.md
     ├── code-review.md
+    ├── api-doc.md
     ├── deploy-doc.md
     ├── feature-dev.md
     └── testing.md
@@ -204,7 +222,9 @@ Cursor 说明：
 | 审查代码（Java） | `/code-review-java` | `requirement-clarify-java` -> `code-review-java` |
 | 编写测试（Java） | `/testing-java` | `requirement-clarify-java` -> `testing-java` |
 | 生成部署文档（Java） | `/deploy-doc-java` | `requirement-clarify-java` -> `deploy-doc-java` |
+| 生成 API 文档（Java） | `/api-doc-java` 或自然语言触发 | `requirement-clarify-java` -> `api-doc-java` |
 | 开发并自动评审（Java） | 自然语言触发或组合请求 | `feature-dev-java`/`bug-fix-java` -> `dev-review-java` -> `code-review-java` |
+| 生成 API 文档（Go） | 自然语言触发或 `/api-doc` | `requirement-clarify-go` -> `api-doc-go` |
 | 拆子任务开发（Go） | 自然语言触发或组合请求 | `requirement-clarify-go` -> `feature-dev-go-orchestrated` |
 | 拆子任务开发并评审（Go） | 自然语言触发或组合请求 | `requirement-clarify-go` -> `dev-review-go-orchestrated` |
 

@@ -1,11 +1,11 @@
 ---
 name: requirement-clarify-java
-description: Java 需求澄清协议 — AI 在执行 Java 开发、修复、重构、评审、测试和部署文档任务前，必须通过结构化追问收集完整需求信息，禁止在信息不足时直接动手
+description: Java 需求澄清协议 — AI 在执行 Java 开发、修复、重构、评审、测试、部署文档和 API 文档任务前，必须通过结构化追问收集完整需求信息，禁止在信息不足时直接动手
 ---
 
 # 需求澄清协议（Requirement Clarification Protocol）
 
-> **本协议被以下 Skill 引用**：`feature-dev-java`、`bug-fix-java`、`refactor-java`、`code-review-java`、`deploy-doc-java`、`testing-java`
+> **本协议被以下 Skill 引用**：`feature-dev-java`、`bug-fix-java`、`refactor-java`、`code-review-java`、`deploy-doc-java`、`api-doc-java`、`testing-java`
 > 
 > 当上述 Skill 被触发时，**必须先执行本协议**，通过后方可进入各 Skill 的正式执行阶段。
 
@@ -164,6 +164,24 @@ description: Java 需求澄清协议 — AI 在执行 Java 开发、修复、重
 | D-04 | **部署方式** | Docker / K8s / 裸机 systemd / 其他？ |
 | D-05 | **特殊约束** | 有没有停机窗口限制？需要蓝绿/滚动部署吗？ |
 | D-06 | **回滚要求** | 回滚方案有什么特殊要求吗？ |
+
+---
+
+### 📚 api-doc（API 文档）
+
+#### 🔴 必问项
+| 编号 | 问题 | 说明 |
+|:---:|------|------|
+| A-01 | **文档范围** | 需要输出哪些 Controller、接口分组、模块或服务的文档？ |
+| A-02 | **输出形态** | 只要 Markdown、只补 Swagger / SpringDoc，还是两者都要？ |
+| A-03 | **调用前提** | 接口面向谁使用？Base URL、鉴权方式、环境前提是什么？ |
+
+#### 🟡 选问项
+| 编号 | 问题 | 说明 |
+|:---:|------|------|
+| A-04 | **覆盖深度** | 是否需要包含错误码、分页约定、幂等、限流、回调说明？ |
+| A-05 | **示例要求** | 是否需要 `curl`、示例请求/响应、脱敏示例数据？ |
+| A-06 | **现有资料** | 有没有现成 Swagger、README、联调文档或网关说明可参考？ |
 
 ---
 

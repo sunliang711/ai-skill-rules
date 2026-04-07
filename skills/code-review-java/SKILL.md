@@ -140,9 +140,9 @@ description: Java 代码评审流程 — 从安全、规范、质量三个维度
 
 ### 步骤 5：生成任务交付文档
 
-> ⚠️ **必须在所有步骤完成后执行**，使用 Write 工具将文档写入 `docs/` 目录。
+> ⚠️ **必须在所有步骤完成后执行**，使用 Write 工具将文档写入 `docs/review/` 目录。
 
-文件命名规则：`docs/{YYYY-MM-DD}-review-{审查模块简称}.md`（模块简称用英文小写短横线分隔，如 `user-service`、`order-controller`）。
+文件命名规则：`docs/review/{YYYY-MM-DD}-review-{审查模块简称}.md`（模块简称用英文小写短横线分隔，如 `user-service`、`order-controller`）。
 
 文档模板如下（按实际情况填写，无变更的章节保留标题并标注"无"）：
 

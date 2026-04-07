@@ -39,4 +39,4 @@ description: Shell 部署文档生成流程。用于梳理 Shell 脚本、定时
 - 标明哪些步骤是高风险或需要人工确认
 
 ## 步骤 5：任务交付文档
-在 `docs/` 下生成：`docs/{YYYY-MM-DD}-deploy-shell-{脚本简称}.md`
+在 `docs/deploy/` 下生成：`docs/deploy/{YYYY-MM-DD}-deploy-shell-{脚本简称}.md`

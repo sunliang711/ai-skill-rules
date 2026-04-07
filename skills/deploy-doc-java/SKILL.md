@@ -243,9 +243,9 @@ DROP TABLE IF EXISTS sms_verify_code;
 
 ## 步骤 5：生成任务交付文档
 
-> ⚠️ **必须在交叉验证通过后执行**，使用 Write 工具将文档写入 `docs/` 目录。
+> ⚠️ **必须在交叉验证通过后执行**，使用 Write 工具将文档写入 `docs/deploy/` 目录。
 
-文件命名规则：`docs/{YYYY-MM-DD}-deploy-{功能或版本简称}.md`（简称用英文小写短横线分隔，如 `sms-service`、`v2.1.0-release`）。
+文件命名规则：`docs/deploy/{YYYY-MM-DD}-deploy-{功能或版本简称}.md`（简称用英文小写短横线分隔，如 `sms-service`、`v2.1.0-release`）。
 
 文档模板如下（按实际情况填写，无变更的章节保留标题并标注"无"）：
 

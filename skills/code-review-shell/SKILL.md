@@ -49,4 +49,4 @@ description: Shell 代码评审流程。用于审查 Shell 脚本的命令安全
 明确写出“未发现明确问题”，并补充残余风险或验证缺口。
 
 ### 步骤 5：任务交付文档
-在 `docs/` 下生成：`docs/{YYYY-MM-DD}-review-shell-{脚本简称}.md`
+在 `docs/review/` 下生成：`docs/review/{YYYY-MM-DD}-review-shell-{脚本简称}.md`

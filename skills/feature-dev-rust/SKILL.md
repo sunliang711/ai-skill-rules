@@ -89,4 +89,4 @@ description: Rust 标准功能开发流程。用于实现 Rust HTTP 接口、CLI
 ```
 
 ### 步骤 8：任务交付文档
-在 `docs/` 下生成：`docs/{YYYY-MM-DD}-feature-rust-{功能简称}.md`
+在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD}-feature-rust-{功能简称}.md`

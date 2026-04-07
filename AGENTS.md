@@ -60,6 +60,7 @@
 | `code-review-java` | "审查 Java 代码"、"review Java" | `requirement-clarify-java` | 准备审查 → 三维度审查 → 输出报告 |
 | `testing-java` | "写 Java 测试"、"生成 Java 单元测试" | `requirement-clarify-java` | 分析目标 → 设计用例 → 编写测试 → 交付 |
 | `deploy-doc-java` | "生成 Java 部署文档" | `requirement-clarify-java` | 确定范围 → 逐项提取 → 生成文档 → 交叉验证 |
+| `api-doc-java` | "生成 Java API 文档"、"整理接口说明"、"补 curl 调用示例" | `requirement-clarify-java` | 确定范围 → 提取接口契约 → 生成文档 → 交叉验证 |
 | `dev-review-java` | "开发 Java 并评审"、"做完 Java 后帮我 review" | `feature-dev-java`/`bug-fix-java` + `code-review-java` | 执行开发 → 自动衔接评审 → 合并交付 |
 | `requirement-clarify-go` | 被 Go Skill 引用，不直接触发 | — | Go 场景结构化追问 → 信息充分度自检 → 退出条件 |
 | `feature-dev-go` | "开发 Go 功能"、"实现 Gin 接口"、"新增 Go 服务能力" | `requirement-clarify-go` | 需求整理 → 方案设计 → Go 分层编码 → 测试自检 → 交付 |
@@ -69,6 +70,7 @@
 | `code-review-go` | "Review Go 代码"、"审查 Go PR" | `requirement-clarify-go` | 审查准备 → 安全/规范/质量三维度审查 → 输出报告 |
 | `testing-go` | "给 Go 写测试"、"补 table-driven test" | `requirement-clarify-go` | 分析目标 → 用例设计 → 编写测试 → 覆盖交付 |
 | `deploy-doc-go` | "生成 Go 部署文档"、"整理 Go 发布清单" | `requirement-clarify-go` | 确定范围 → 提取配置与依赖 → 生成文档 → 交叉验证 |
+| `api-doc-go` | "生成 Go API 文档"、"整理 Gin 接口说明"、"补 curl 调用示例" | `requirement-clarify-go` | 确定范围 → 提取接口契约 → 生成文档 → 交叉验证 |
 | `dev-review-go` | "开发 Go 并评审"、"修复 Go 后帮我 review" | `feature-dev-go`/`bug-fix-go` + `code-review-go` | 执行开发或修复 → 自动衔接评审 → 合并交付 |
 | `dev-review-go-orchestrated` | "拆子任务开发并评审 Go"、"让 subagent 做 Go 开发+review" | `feature-dev-go-orchestrated`/`bug-fix-go` + `code-review-go` | 编排实现或修复 → 独立评审 → 问题修复 → 文档交付 |
 | `remote-deploy` | "部署到远程"、"部署冷钱包" | — | 参数收集 → 编译 → SCP → 部署 online/offline |
@@ -76,8 +78,8 @@
 
 ### 新增语言 Skill 家族
 
-- **Rust Skill 家族**：`requirement-clarify-rust`、`feature-dev-rust`、`bug-fix-rust`、`refactor-rust`、`code-review-rust`、`testing-rust`、`deploy-doc-rust`、`dev-review-rust`
-- **Python Skill 家族**：`requirement-clarify-python`、`feature-dev-python`、`bug-fix-python`、`refactor-python`、`code-review-python`、`testing-python`、`deploy-doc-python`、`dev-review-python`
+- **Rust Skill 家族**：`requirement-clarify-rust`、`feature-dev-rust`、`bug-fix-rust`、`refactor-rust`、`code-review-rust`、`testing-rust`、`deploy-doc-rust`、`api-doc-rust`、`dev-review-rust`
+- **Python Skill 家族**：`requirement-clarify-python`、`feature-dev-python`、`bug-fix-python`、`refactor-python`、`code-review-python`、`testing-python`、`deploy-doc-python`、`api-doc-python`、`dev-review-python`
 - **Shell Skill 家族**：`requirement-clarify-shell`、`feature-dev-shell`、`bug-fix-shell`、`refactor-shell`、`code-review-shell`、`testing-shell`、`deploy-doc-shell`、`dev-review-shell`
 - 三组新语言 Skill 的依赖模式与 Java / Go 保持一致：`requirement-clarify-*` 作为前置，`dev-review-*` 作为“开发/修复 + review”组合流程
 
@@ -90,6 +92,7 @@ requirement-clarify-java ◄── feature-dev-java
                          ◄── code-review-java
                          ◄── testing-java
                          ◄── deploy-doc-java
+                         ◄── api-doc-java
 
 feature-dev-java ──┐
                    ├── dev-review-java ──► code-review-java
@@ -102,6 +105,7 @@ requirement-clarify-go ◄── feature-dev-go
                        ◄── code-review-go
                        ◄── testing-go
                        ◄── deploy-doc-go
+                       ◄── api-doc-go
 
 feature-dev-go ──┐
                  ├── dev-review-go ──► code-review-go
@@ -115,10 +119,10 @@ greenfield-project ──► feature-dev-java / feature-dev-go（开发子任务
 Rust / Python / Shell 依赖模式与上方相同：
 
 ```text
-requirement-clarify-rust ◄── feature-dev-rust / bug-fix-rust / refactor-rust / code-review-rust / testing-rust / deploy-doc-rust
+requirement-clarify-rust ◄── feature-dev-rust / bug-fix-rust / refactor-rust / code-review-rust / testing-rust / deploy-doc-rust / api-doc-rust
 feature-dev-rust / bug-fix-rust ──► dev-review-rust ──► code-review-rust
 
-requirement-clarify-python ◄── feature-dev-python / bug-fix-python / refactor-python / code-review-python / testing-python / deploy-doc-python
+requirement-clarify-python ◄── feature-dev-python / bug-fix-python / refactor-python / code-review-python / testing-python / deploy-doc-python / api-doc-python
 feature-dev-python / bug-fix-python ──► dev-review-python ──► code-review-python
 
 requirement-clarify-shell ◄── feature-dev-shell / bug-fix-shell / refactor-shell / code-review-shell / testing-shell / deploy-doc-shell
@@ -181,10 +185,12 @@ feature-dev-shell / bug-fix-shell ──► dev-review-shell ──► code-revi
 
 - **适用场景**: 接口文档编写、业务流程描述
 - **遵循规范**: `00-global` + `03-java-api-design`
+- **可触发 Skill**: `api-doc-java`
 - **行为指引**:
     - 接口文档贴合实际业务命名，不引入新术语
     - 标明接口是否对外开放、是否需要鉴权
     - 请求/响应体中的字段注明是否必填
+    - 为关键接口补充 `curl`、示例请求/响应和错误码说明
     - 发现接口设计存在不一致或问题时，提出改进建议但不强制
 
 ### 🧠 Go 全能开发助手（go-dev）
@@ -233,13 +239,13 @@ feature-dev-shell / bug-fix-shell ──► dev-review-shell ──► code-revi
 
 ### 📚 Go 接口与部署文档助手（go-api-doc-writer）
 
-- **适用场景**: Go 接口文档、部署文档、发布说明编写
+- **适用场景**: Go 接口文档、调用示例、发布说明编写
 - **遵循规范**: `00-global` + `05-go-security` + `06-go-api-design`
-- **可触发 Skill**: `deploy-doc-go`
+- **可触发 Skill**: `api-doc-go`
 - **行为指引**:
     - 接口和配置命名贴合实际代码，不引入额外术语
     - 标明接口入口、鉴权要求、请求响应字段和配置依赖
-    - 生成部署文档时优先列清环境变量、配置项、迁移和回滚步骤
+    - 为关键接口补充 `curl`、示例请求/响应和错误码说明
     - 发现发布链路中存在缺失项或风险时，明确指出但不擅自扩大改动范围
 
 ### 🏗️ 项目架构师（project-architect）
@@ -264,12 +270,12 @@ feature-dev-shell / bug-fix-shell ──► dev-review-shell ──► code-revi
 | spring-test-writer | ✅ | ✅ | | | | | | testing-java |
 | spring-config-optimizer | ✅ | ✅ | ✅ | | | | | — |
 | spring-code-reviewer | ✅ | ✅ | ✅ | ✅ | | | | code-review-java |
-| spring-api-doc-writer | ✅ | | | ✅ | | | | — |
+| spring-api-doc-writer | ✅ | | | ✅ | | | | api-doc-java |
 | go-dev | ✅ | | | | ✅ | ✅ | ✅ | feature-dev-go, bug-fix-go, refactor-go |
 | go-test-writer | ✅ | | | | ✅ | ✅ | | testing-go |
 | go-config-optimizer | ✅ | | | | ✅ | ✅ | | — |
 | go-code-reviewer | ✅ | | | | ✅ | ✅ | ✅ | code-review-go |
-| go-api-doc-writer | ✅ | | | | | ✅ | ✅ | deploy-doc-go |
+| go-api-doc-writer | ✅ | | | | | ✅ | ✅ | api-doc-go |
 | project-architect | ✅ | 🔄 | 🔄 | 🔄 | 🔄 | 🔄 | 🔄 | greenfield-project |
 
 > ✅ = 始终加载　　🔄 = 技术栈确定后按需加载（见 `greenfield-project` 的「技术栈 → 规则映射」）
