@@ -45,12 +45,14 @@
 | [`skills/deploy-doc-java/SKILL.md`](skills/deploy-doc-java/SKILL.md) | Java 部署文档提取与生成流程 |
 | [`skills/dev-review-java/SKILL.md`](skills/dev-review-java/SKILL.md) | Java 开发或修复完成后自动衔接评审的组合流程 |
 | [`skills/feature-dev-go/SKILL.md`](skills/feature-dev-go/SKILL.md) | Go 功能开发流程 |
+| [`skills/feature-dev-go-orchestrated/SKILL.md`](skills/feature-dev-go-orchestrated/SKILL.md) | Go 多 Agent 功能开发编排流程 |
 | [`skills/bug-fix-go/SKILL.md`](skills/bug-fix-go/SKILL.md) | Go Bug 修复流程 |
 | [`skills/refactor-go/SKILL.md`](skills/refactor-go/SKILL.md) | Go 代码重构流程 |
 | [`skills/code-review-go/SKILL.md`](skills/code-review-go/SKILL.md) | Go 安全、规范、质量三维度代码评审 |
 | [`skills/testing-go/SKILL.md`](skills/testing-go/SKILL.md) | Go 单元测试/集成测试编写流程 |
 | [`skills/deploy-doc-go/SKILL.md`](skills/deploy-doc-go/SKILL.md) | Go 部署文档提取与生成流程 |
 | [`skills/dev-review-go/SKILL.md`](skills/dev-review-go/SKILL.md) | Go 开发或修复完成后自动衔接评审的组合流程 |
+| [`skills/dev-review-go-orchestrated/SKILL.md`](skills/dev-review-go-orchestrated/SKILL.md) | Go 多 Agent 开发加评审编排流程 |
 | `skills/*-rust/` | Rust Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
 | `skills/*-python/` | Python Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
 | `skills/*-shell/` | Shell Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
@@ -125,7 +127,11 @@
 │   │   └── SKILL.md
 │   ├── dev-review-go/
 │   │   └── SKILL.md
+│   ├── dev-review-go-orchestrated/
+│   │   └── SKILL.md
 │   ├── feature-dev-go/
+│   │   └── SKILL.md
+│   ├── feature-dev-go-orchestrated/
 │   │   └── SKILL.md
 │   ├── refactor-go/
 │   │   └── SKILL.md
@@ -199,6 +205,8 @@ Cursor 说明：
 | 编写测试（Java） | `/testing-java` | `requirement-clarify-java` -> `testing-java` |
 | 生成部署文档（Java） | `/deploy-doc-java` | `requirement-clarify-java` -> `deploy-doc-java` |
 | 开发并自动评审（Java） | 自然语言触发或组合请求 | `feature-dev-java`/`bug-fix-java` -> `dev-review-java` -> `code-review-java` |
+| 拆子任务开发（Go） | 自然语言触发或组合请求 | `requirement-clarify-go` -> `feature-dev-go-orchestrated` |
+| 拆子任务开发并评审（Go） | 自然语言触发或组合请求 | `requirement-clarify-go` -> `dev-review-go-orchestrated` |
 
 ---
 

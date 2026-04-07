@@ -63,12 +63,14 @@
 | `dev-review-java` | "开发 Java 并评审"、"做完 Java 后帮我 review" | `feature-dev-java`/`bug-fix-java` + `code-review-java` | 执行开发 → 自动衔接评审 → 合并交付 |
 | `requirement-clarify-go` | 被 Go Skill 引用，不直接触发 | — | Go 场景结构化追问 → 信息充分度自检 → 退出条件 |
 | `feature-dev-go` | "开发 Go 功能"、"实现 Gin 接口"、"新增 Go 服务能力" | `requirement-clarify-go` | 需求整理 → 方案设计 → Go 分层编码 → 测试自检 → 交付 |
+| `feature-dev-go-orchestrated` | "拆子任务开发 Go 功能"、"让 subagent 并行实现 Go 需求" | `requirement-clarify-go` + `feature-dev-go` | 需求澄清 → 子任务拆分 → 调研/实现/评审/文档编排 → 主 Agent 集成交付 |
 | `bug-fix-go` | "修复 Go bug"、"排查 panic"、"定位 Go 异常" | `requirement-clarify-go` | 信息整理 → 根因定位 → 最小修复 → 验证交付 |
 | `refactor-go` | "重构 Go 代码"、"优化 Go 结构"、"拆分包/职责" | `requirement-clarify-go` | 范围确认 → 重构方案 → 小步实施 → 回归验证 → 交付 |
 | `code-review-go` | "Review Go 代码"、"审查 Go PR" | `requirement-clarify-go` | 审查准备 → 安全/规范/质量三维度审查 → 输出报告 |
 | `testing-go` | "给 Go 写测试"、"补 table-driven test" | `requirement-clarify-go` | 分析目标 → 用例设计 → 编写测试 → 覆盖交付 |
 | `deploy-doc-go` | "生成 Go 部署文档"、"整理 Go 发布清单" | `requirement-clarify-go` | 确定范围 → 提取配置与依赖 → 生成文档 → 交叉验证 |
 | `dev-review-go` | "开发 Go 并评审"、"修复 Go 后帮我 review" | `feature-dev-go`/`bug-fix-go` + `code-review-go` | 执行开发或修复 → 自动衔接评审 → 合并交付 |
+| `dev-review-go-orchestrated` | "拆子任务开发并评审 Go"、"让 subagent 做 Go 开发+review" | `feature-dev-go-orchestrated`/`bug-fix-go` + `code-review-go` | 编排实现或修复 → 独立评审 → 问题修复 → 文档交付 |
 | `remote-deploy` | "部署到远程"、"部署冷钱包" | — | 参数收集 → 编译 → SCP → 部署 online/offline |
 | `greenfield-project` | "从零开始做项目"、"新建项目"、"项目规划"、"搭建新系统" | — | 需求发现 → 整体方案设计（技术栈确定后加载对应语言 Rules） → 方案评审迭代 → 文档输出（架构方案 + 子任务 + 进度跟踪 + 基于 Rules 的编码规范） |
 
@@ -94,6 +96,7 @@ feature-dev-java ──┐
 bug-fix-java ──────┘
 
 requirement-clarify-go ◄── feature-dev-go
+                       ◄── feature-dev-go-orchestrated
                        ◄── bug-fix-go
                        ◄── refactor-go
                        ◄── code-review-go
@@ -103,6 +106,8 @@ requirement-clarify-go ◄── feature-dev-go
 feature-dev-go ──┐
                  ├── dev-review-go ──► code-review-go
 bug-fix-go ──────┘
+
+feature-dev-go-orchestrated ──► dev-review-go-orchestrated ──► code-review-go
 
 greenfield-project ──► feature-dev-java / feature-dev-go（开发子任务时按技术栈衔接）
 ```
@@ -187,6 +192,7 @@ feature-dev-shell / bug-fix-shell ──► dev-review-shell ──► code-revi
 - **适用场景**: Go 后端日常开发、代码解释、工程结构讨论
 - **遵循规范**: `00-global` + `04-go-backend` + `05-go-security` + `06-go-api-design`
 - **可触发 Skill**: `feature-dev-go`、`bug-fix-go`、`refactor-go`
+- **编排型 Skill（支持 subagent 环境）**: `feature-dev-go-orchestrated`、`dev-review-go-orchestrated`
 - **行为指引**:
     - 修改代码前先说明思路，再给出具体实现
     - 优先保持 `handler -> service -> repo -> model/dto` 分层边界清晰
