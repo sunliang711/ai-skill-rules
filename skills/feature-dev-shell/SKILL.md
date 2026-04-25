@@ -66,4 +66,4 @@ description: Shell 标准脚本开发流程。用于实现 Bash/sh/zsh 脚本、
 ```
 
 ### 步骤 7：任务交付文档
-在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD}-feature-shell-{脚本简称}.md`
+在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD-HH-mm-ss}-feature-shell-{脚本简称}.md`

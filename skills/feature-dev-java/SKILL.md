@@ -212,7 +212,7 @@ description: Java 标准功能开发流程 — AI 辅助从需求分析到编码
 
 > ⚠️ **必须在所有步骤完成后执行**，使用 Write 工具将文档写入 `docs/delivery/` 目录。
 
-文件命名规则：`docs/delivery/{YYYY-MM-DD}-feature-{功能简称}.md`（功能简称用英文小写短横线分隔，如 `user-register`、`order-export`）。
+文件命名规则：`docs/delivery/{YYYY-MM-DD-HH-mm-ss}-feature-{功能简称}.md`（功能简称用英文小写短横线分隔，如 `user-register`、`order-export`）。
 
 文档模板如下（按实际情况填写，无变更的章节保留标题并标注"无"）：
 

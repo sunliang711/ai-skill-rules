@@ -96,7 +96,7 @@ go test ./... -cover
 ```
 
 ## 步骤 5：任务交付文档
-在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD}-test-go-{模块简称}.md`
+在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD-HH-mm-ss}-test-go-{模块简称}.md`
 
 建议包含：
 - 测试目标

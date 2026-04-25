@@ -136,7 +136,7 @@ description: Java 开发+评审组合流程 — 在 feature-dev-java 或 bug-fix
 > 
 > **注意**：dev-review-java 流程生成**一份合并文档**，涵盖开发/修复和评审两个阶段的全部信息，**不再**由子 Skill（feature-dev-java / bug-fix-java / code-review-java）各自单独生成文档。
 
-文件命名规则：`docs/delivery/{YYYY-MM-DD}-dev-review-{功能或问题简称}.md`（简称用英文小写短横线分隔，如 `user-register`、`fix-login-npe`）。
+文件命名规则：`docs/delivery/{YYYY-MM-DD-HH-mm-ss}-dev-review-{功能或问题简称}.md`（简称用英文小写短横线分隔，如 `user-register`、`fix-login-npe`）。
 
 文档模板如下（按实际情况填写，无变更的章节保留标题并标注"无"）：
 

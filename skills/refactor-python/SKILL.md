@@ -58,4 +58,4 @@ description: Python 重构流程。用于在保持行为可控的前提下，调
 ```
 
 ### 步骤 6：任务交付文档
-在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD}-refactor-python-{模块简称}.md`
+在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD-HH-mm-ss}-refactor-python-{模块简称}.md`

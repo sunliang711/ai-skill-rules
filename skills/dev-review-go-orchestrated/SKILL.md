@@ -128,7 +128,7 @@ doc 输入至少包含：
 
 ## 任务交付文档
 
-在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD}-dev-review-go-orchestrated-{功能或问题简称}.md`
+在 `docs/delivery/` 下生成：`docs/delivery/{YYYY-MM-DD-HH-mm-ss}-dev-review-go-orchestrated-{功能或问题简称}.md`
 
 建议包含：
 - 任务背景
