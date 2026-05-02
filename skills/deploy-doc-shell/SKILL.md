@@ -10,6 +10,7 @@ description: Shell 部署文档生成流程。用于梳理 Shell 脚本、定时
 ## 前置：需求澄清
 
 > 必须先执行 `requirement-clarify-shell`，至少确认 `DS-01` ~ `DS-02`。
+> 若脚本会产生写入副作用，部署文档必须说明脚本内部的写前前置检查逻辑。
 
 ## 步骤 1：确认部署范围
 - 涉及哪些脚本、定时任务、CI 作业、systemd / cron 配置

@@ -10,6 +10,7 @@ description: Shell 标准脚本开发流程。用于实现 Bash/sh/zsh 脚本、
 ## 前置：需求澄清
 
 > 必须先执行 `requirement-clarify-shell`，至少确认 `FS-01` ~ `FS-04`。
+> 若脚本会产生写入副作用，必须在脚本内部添加写前前置检查逻辑。
 
 ## 阶段一：理解需求与方案设计
 
