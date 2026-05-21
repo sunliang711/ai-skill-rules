@@ -5,6 +5,12 @@ description: Java 需求澄清协议 — AI 在执行 Java 开发、修复、重
 
 # 需求澄清协议（Requirement Clarification Protocol）
 
+## 注释要求
+
+- 涉及生成或修改代码时，每个函数 / 方法都必须添加注释，说明其功能和适用场景。
+- 关键业务流程、复杂分支、异常处理、副作用、并发、权限、外部调用等关键部分必须添加必要注释。
+- 注释必须沿用目标文件已有风格，保持简洁准确，避免重复描述代码本身。
+
 > **本协议被以下 Skill 引用**：`feature-dev-java`、`bug-fix-java`、`refactor-java`、`code-review-java`、`deploy-doc-java`、`api-doc-java`、`testing-java`
 > 
 > 当上述 Skill 被触发时，**必须先执行本协议**，通过后方可进入各 Skill 的正式执行阶段。
