@@ -143,6 +143,6 @@
 
 | 目录 | 内容 |
 |------|------|
-| `rules/` | 规范文件源码（生成后可映射到 `.cursor/rules/`、`.agents/rules/`、`.codex/rules/` 等目录） |
+| `rules/` | 规范文件源码（生成后可映射到 `.cursor/rules/`、`.agents/rules/` 等目录；Codex 的 `.codex/rules` 保留给命令权限规则） |
 | `skills/` | 技能文件源码 |
 | `workflows/` | 工作流文件存档 |

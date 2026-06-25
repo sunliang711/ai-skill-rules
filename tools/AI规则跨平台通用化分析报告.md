@@ -23,7 +23,7 @@
 | **Cursor** | `.cursor/rules/*.mdc` | Markdown + YAML frontmatter | 已原生适配 |
 | **Copilot** | `.github/copilot-instructions.md` | 纯 Markdown（单文件） | 需合并所有规则 |
 | **Claude Code** | `CLAUDE.md`（项目根） | 纯 Markdown | 建议 ≤300 行 |
-| **Codex** | `AGENTS.md`（项目根） | 纯 Markdown | 原生读取 |
+| **Codex** | `AGENTS.md`（项目根）+ `.agents/skills/` | 纯 Markdown + YAML frontmatter(skill) | 原生读取 AGENTS.md 和 Skills |
 | **Antigravity** | `AGENTS.md` + `.agents/skills/` | Markdown + YAML frontmatter(skill) | 原生支持 Skills |
 | **Gemini CLI** | `GEMINI.md`（项目根） | 纯 Markdown | 层级覆盖 |
 | **Windsurf** | `.windsurfrules`（项目根） | 纯文本/Markdown | ≤6000 字符为佳 |
@@ -81,7 +81,7 @@ chmod +x tools/generate-for-platform.sh
 | `cursor` | `.mdc` 规则 + skills + workflows | `目标/.cursor/` |
 | `copilot` | 合并后的单文件 | `目标/.github/copilot-instructions.md` |
 | `claude` | 精简版项目指南 | `目标/CLAUDE.md` |
-| `codex` | AGENTS.md（去 Cursor 化） | `目标/AGENTS.md` |
+| `codex` | AGENTS.md（去 Cursor 化）+ rules/skills/workflows | `目标/AGENTS.md` + `目标/.agents/` |
 | `antigravity` | AGENTS.md + skills + workflows | `目标/AGENTS.md` + `目标/.agents/` |
 | `gemini` | 精简版项目指南 | `目标/GEMINI.md` |
 | `windsurf` | 全局 + 安全规则摘要 | `目标/.windsurfrules` |
@@ -95,14 +95,15 @@ chmod +x tools/generate-for-platform.sh
 
 跨平台生成的最大难点在于**并非所有工具都有 Skills 和 Workflows 的原生概念**。本章节详细分析如何在使用这些工具时应用你的三层架构知识库。
 
-### 1. 原生支持级：Cursor & Antigravity (Google)
-这两款工具拥有最完整的 Agentic 架构，原生支持 SOP 指令。
+### 1. 原生支持级：Cursor、Codex 与 Antigravity
+这些工具拥有较完整的 Agentic 架构，原生支持或可自动发现 SOP 指令。
 
 *   **Rules (规范)**：
     *   **Cursor**：通过 `.cursor/rules/*.mdc` 的 `globs` 实现**自动静默激活**。编辑 Java 时只亮起 Java 规则。
     *   **Antigravity**：默认加载 `AGENTS.md` 和 `.agents/rules/` 作为项目大内存上下文。
 *   **Skills & Workflows (技能与工作流)**：
     *   **Cursor**：在对话框输入 `@` 或 `/` 即可列出 `.cursor/skills` 和 `.cursor/workflows` 里的名称。输入 `/feature-dev`，Cursor 就会按照你的 12 步 SOP 一步一步执行。
+    *   **Codex**：读取项目根 `AGENTS.md`，并从 `.agents/skills/` 发现项目级 Skill；全局 Skill 推荐安装到 `$HOME/.agents/skills`。
     *   **Antigravity**：本身具备自动工具链发现能力。当你指令“按照标准流程开发该功能”时，它会自动在 `.agents/skills/feature-dev-java/SKILL.md` 中寻找 SOP 指引并应用。
 
 ### 2. 全局配置级：GitHub Copilot & 通义灵码
@@ -134,7 +135,7 @@ chmod +x tools/generate-for-platform.sh
 ## 五、注意事项
 
 1. **Cursor 的 `globs` 自动激活是专有能力** — 其他平台主要通过自然语言让 AI 自行判断适用范围或全局堆叠。
-2. **Skill/Workflow 极简哲学** — 因为只有 Cursor 和 Antigravity 原生支持分离式的步骤 SOP，使用其他平台时，请务必在 Prompt 中加入：“**请先阅读 `.agents/skills/xxx/SKILL.md`**” 的强指引。
+2. **Skill/Workflow 极简哲学** — Cursor、Codex 和 Antigravity 可直接使用分离式 Skill；使用其他平台时，请务必在 Prompt 中加入：“**请先阅读 `.agents/skills/xxx/SKILL.md`**” 的强指引。
 3. **通义灵码不支持符号链接** — 必须复制/生成实际文件（生成脚本已处理该缺陷）。
 4. **建议将生成文件加入 `.gitignore`** — 只维护源仓库，目标项目按需生成，不污染代码基础。
 
@@ -150,7 +151,7 @@ chmod +x tools/generate-for-platform.sh
 
 ### 2. 多态生成路由 (Platform Adapters)
 脚本针对 9 个不同平台处理文本上限和结构的特性，采取了四套生成策略：
-*   **文件夹整体平移** (`Cursor` / `Antigravity` / `Codex`)：建立平行子空间 `.agents/`，支持无限期长文件和海量规则挂载。
+*   **文件夹整体平移** (`Cursor` / `Antigravity` / `Codex`)：Cursor 使用 `.cursor/`，Codex 与 Antigravity 使用 `.agents/`，支持按需加载规则、Skills 和 Workflows。
 *   **分片引擎** (`通义灵码`)：针对其 10,000 字符硬限制，脚本会自动依据 Markdown 的 `##` 标题段落进行分片计算，安全地将其切成 `part1`、`part2` 多个子块。
 *   **全家桶合并** (`Copilot`)：剥除元数据后，像串糖葫芦一样把全局规范、Java规范、Go规范... 按字典序合并成一个高达 30+KB 的单体指令库 `copilot-instructions.md`。
 *   **极简兜底 + 链接路由** (`Claude` / `Gemini` / `Windsurf`)：针对无法承载海量上下文或依靠统一入口的工具，采用“**保命手册 + 藏宝图**”策略：

@@ -203,9 +203,25 @@
 
 | 平台 | 默认全局目录 | 说明 |
 |------|-------------|------|
-| Codex | `~/.codex` | 安装全局 `AGENTS.md` 区块、规则文档和 Skills |
+| Codex | `~/.codex` + `~/.agents` | `~/.codex` 存放全局 `AGENTS.md` 与规则/工作流参考，`~/.agents/skills` 存放全局 Skills |
 | Claude Code | `~/.claude` | 安装全局 `CLAUDE.md` 区块、规则/Skills 文档和 Slash Commands |
 | Cursor | `~/.cursor` | 安装全局 Skills、规则源、User Rules 文本和项目 bootstrap 脚本 |
+
+Codex 说明：
+
+- Codex 的全局指令入口仍是 `~/.codex/AGENTS.md`
+- Codex Skill 按当前推荐路径安装到 `~/.agents/skills`
+- 如需清理历史版本安装在 `~/.codex/skills` 的 Skill，可先 dry-run，再执行删除：
+
+```bash
+./tools/uninstall-legacy-codex-skills.sh
+./tools/uninstall-legacy-codex-skills.sh --apply
+```
+
+```powershell
+.\tools\uninstall-legacy-codex-skills.ps1
+.\tools\uninstall-legacy-codex-skills.ps1 -Apply
+```
 
 Cursor 说明：
 

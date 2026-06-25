@@ -1,66 +1,66 @@
 ---
-description: 标准功能开发流程 — 从需求澄清到编码交付的全链路 SOP
+description: 标准功能开发流程 — 按语言分派，从需求澄清到验证交付
 ---
 
 # /feature-dev 工作流
 
-当用户使用 `/feature-dev` 命令时，严格按以下步骤执行：
+当用户使用 `/feature-dev` 命令或明确提出“开发/实现功能”时，严格按以下步骤执行。
 
-## 步骤 1：需求澄清
-使用 `view_file` 工具读取 `.agents/skills/requirement-clarify-java/SKILL.md`，按照「feature-dev 专属问题清单」执行需求澄清流程。
+## 步骤 1：识别语言与入口
+- 根据用户描述、目标文件扩展名、项目结构和框架配置判断语言：Java / Go / Rust / Python / Shell
+- 若用户已明确指定语言，以用户指定为准
+- 若无法判断语言或影响范围，先追问，不得默认按 Java 处理
 
-**在所有 🔴 必问项（F-01 ~ F-04）都已确认之前，禁止进入下一步。**
+## 步骤 2：加载对应需求澄清协议
 
-## 步骤 2：方案设计
-使用 `view_file` 工具读取 `.agents/skills/feature-dev-java/SKILL.md`，按照阶段一输出实现方案：
-- 影响范围、文件清单
-- 数据库变更、接口设计
-- 核心业务逻辑、安全考量
+| 语言 | 需求澄清 Skill | 功能开发 Skill |
+|------|----------------|----------------|
+| Java | `.agents/skills/requirement-clarify-java/SKILL.md` | `.agents/skills/feature-dev-java/SKILL.md` |
+| Go | `.agents/skills/requirement-clarify-go/SKILL.md` | `.agents/skills/feature-dev-go/SKILL.md` |
+| Rust | `.agents/skills/requirement-clarify-rust/SKILL.md` | `.agents/skills/feature-dev-rust/SKILL.md` |
+| Python | `.agents/skills/requirement-clarify-python/SKILL.md` | `.agents/skills/feature-dev-python/SKILL.md` |
+| Shell | `.agents/skills/requirement-clarify-shell/SKILL.md` | `.agents/skills/feature-dev-shell/SKILL.md` |
 
-通知用户审阅方案。
+按照对应 Skill 的必问项完成信息充分度检查。必问项未确认前，禁止进入编码阶段。
 
-## 步骤 3：方案辩论
-- 用户提出质疑和问题
-- 逐一回答、解释设计决策
-- 根据反馈修改方案
-- **必须等待用户明确说"同意"/"开始"/"执行"后才进入编码阶段**
+## 步骤 3：输出实现方案
+按对应功能开发 Skill 的方案模板输出：
+- 目标与边界
+- 影响范围与文件清单
+- 入口 / 接口 / 命令设计
+- 数据、配置、依赖变更
+- 安全、并发、事务、资源释放等风险
+- 验证方式
+
+必须等待用户明确确认后再编码。
 
 ## 步骤 4：编码实现
-使用 `view_file` 工具读取项目根目录 `AGENTS.md` 中的安全规范章节（第四章：安全红线），确保代码符合所有 🔴 强制规则。
+- 读取项目根目录 `AGENTS.md` 以及相关语言规则
+- 按对应语言 Skill 的实现顺序进行最小变更
+- 禁止引入与本功能无关的重构、依赖升级或风格化改动
 
-按照 `feature-dev-java` Skill 阶段二的分层顺序编码：
-- 数据库脚本 → Entity → DTO → Repository → Service → Controller
+## 步骤 5：验证
+优先从项目现有文档、构建文件和 CI 配置中识别验证命令，例如：
+- Java：`mvn test`、`mvn compile`、`./gradlew test`
+- Go：`go test ./...`
+- Rust：`cargo test`、`cargo clippy`
+- Python：`pytest`、`ruff`、`mypy`
+- Shell：`shellcheck`、`bats`
 
-## 步骤 5：代码审阅
-- 列出所有修改的文件和关键变更点
-- **必须等待用户确认代码无问题后才继续**
+若项目没有明确验证命令，说明推断依据，并选择最小可行验证；仍无法判断时向用户确认。
 
-## 步骤 6：编译验证
-// turbo
-```bash
-cd /d/ideaworkspace/exchange-cold-wallet-backend && mvn compile -q 2>&1 | tail -10 && echo "BUILD_OK"
-```
-- 编译失败 → 修复后重新编译
-- 编译通过 → 继续下一步
+## 步骤 6：交付
+输出：
+- 变更摘要
+- 验证结果
+- 配置、数据库、依赖、部署影响
+- 残余风险与后续建议
 
-## 步骤 7：自检与交付
-按照 `feature-dev-java` Skill 阶段三执行：
-- 自检清单逐项检查
-- 输出变更摘要 + ChangeLog
-
-## 步骤 8：提交代码
-- 查看变更文件
-// turbo
-```bash
-cd /d/ideaworkspace/exchange-cold-wallet-backend && git status --short && git diff --stat
-```
-- 提交（需要用户确认 commit message）
-```bash
-cd /d/ideaworkspace/exchange-cold-wallet-backend && git add -A && git commit -m "<commit message>"
-```
+只有用户明确要求提交代码时，才执行 `git add` / `git commit`。
 
 ## 使用示例
-```
+```text
 /feature-dev 新增一个根据交易哈希查询交易详情的接口
-/feature-dev 实现地址余额批量查询功能
+/feature-dev 给这个 Go 服务实现批量导入任务
+/feature-dev 给这个 Shell 脚本增加 dry-run 参数
 ```

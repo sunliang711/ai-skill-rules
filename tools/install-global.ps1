@@ -16,6 +16,7 @@
 param(
     [string]$Platform,
     [string]$CodexHome = "",
+    [string]$AgentsHome = "",
     [string]$CursorHome = "",
     [string]$ClaudeHome = "",
     [switch]$Help
@@ -39,6 +40,7 @@ if ($Help -or -not $Platform) {
 
   Optional Parameters:
     -CodexHome   Override Codex home directory
+    -AgentsHome  Override Agent Skills home directory
     -CursorHome  Override Cursor home directory
     -ClaudeHome  Override Claude Code home directory
 
@@ -209,10 +211,11 @@ Write-Host "- If you want file-pattern auto activation, keep these files in the 
 
 function Install-Codex {
     $HomeDir = if ($CodexHome) { $CodexHome } elseif ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME ".codex" }
+    $AgentHomeDir = if ($AgentsHome) { $AgentsHome } elseif ($env:AGENTS_HOME) { $env:AGENTS_HOME } else { Join-Path $HOME ".agents" }
     $InstallRoot = Join-Path $HomeDir "ai-rules-skills"
     $RulesOut = Join-Path $InstallRoot "rules"
     $WorkflowsOut = Join-Path $InstallRoot "workflows"
-    $SkillsOut = Join-Path $HomeDir "skills"
+    $SkillsOut = Join-Path $AgentHomeDir "skills"
     $AgentsFile = Join-Path $HomeDir "AGENTS.md"
 
     Write-Host "[Codex] Installing to $HomeDir ..." -ForegroundColor Yellow

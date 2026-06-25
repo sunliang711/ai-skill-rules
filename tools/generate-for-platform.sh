@@ -38,7 +38,7 @@ show_help() {
     cursor       Cursor IDE (.cursor/rules/*.mdc + skills + workflows)
     copilot      GitHub Copilot (.github/copilot-instructions.md)
     claude       Claude Code (CLAUDE.md)
-    codex        OpenAI Codex (AGENTS.md)
+    codex        OpenAI Codex (AGENTS.md + .agents/)
     antigravity  Google Antigravity (AGENTS.md + .agents/)
     gemini       Gemini CLI / Code Assist (GEMINI.md)
     windsurf     Windsurf (.windsurfrules)
@@ -93,8 +93,8 @@ read_agents_md_generic() {
 
 read_agents_md_codex() {
     cat "$AGENTS_MD" \
-        | sed 's|\.cursor/rules/|.codex/rules/|g' \
-        | sed 's|\.cursor/skills/|.codex/skills/|g' \
+        | sed 's|\.cursor/rules/|.agents/rules/|g' \
+        | sed 's|\.cursor/skills/|.agents/skills/|g' \
         | sed 's|\.mdc|.md|g'
 }
 
@@ -208,12 +208,12 @@ REFS
 }
 
 generate_codex() {
-    echo -e "${YELLOW}[Codex] Generating AGENTS.md + .codex/rules/ + .codex/skills/ ...${NC}"
+    echo -e "${YELLOW}[Codex] Generating AGENTS.md + .agents/ ...${NC}"
 
     local out_file="$TARGET_DIR/AGENTS.md"
     read_agents_md_codex > "$out_file"
 
-    local out_rules="$TARGET_DIR/.codex/rules"
+    local out_rules="$TARGET_DIR/.agents/rules"
     ensure_dir "$out_rules"
 
     for rule in "$RULES_DIR"/*.mdc; do
@@ -222,11 +222,17 @@ generate_codex() {
     done
 
     if [ -d "$SKILLS_DIR" ]; then
-        cp -r "$SKILLS_DIR" "$TARGET_DIR/.codex/skills"
+        ensure_dir "$TARGET_DIR/.agents/skills"
+        cp -R "$SKILLS_DIR"/. "$TARGET_DIR/.agents/skills/"
+    fi
+
+    if [ -d "$WORKFLOWS_DIR" ]; then
+        ensure_dir "$TARGET_DIR/.agents/workflows"
+        cp "$WORKFLOWS_DIR"/* "$TARGET_DIR/.agents/workflows/"
     fi
 
     local count=$(ls -1 "$out_rules" | wc -l | tr -d ' ')
-    echo -e "${GREEN}  -> $out_file + $out_rules ($count rules) + .codex/skills${NC}"
+    echo -e "${GREEN}  -> $out_file + .agents/ ($count rules + skills + workflows)${NC}"
 }
 
 generate_antigravity() {
@@ -246,7 +252,8 @@ generate_antigravity() {
 
     # Skills (keep YAML frontmatter, Antigravity supports it)
     if [ -d "$SKILLS_DIR" ]; then
-        cp -r "$SKILLS_DIR" "$TARGET_DIR/.agents/skills"
+        ensure_dir "$TARGET_DIR/.agents/skills"
+        cp -R "$SKILLS_DIR"/. "$TARGET_DIR/.agents/skills/"
     fi
 
     # Workflows

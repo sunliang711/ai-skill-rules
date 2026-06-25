@@ -40,7 +40,7 @@ if ($Help -or -not $Platform -or -not $TargetDir) {
     cursor       Cursor IDE (.cursor/rules/*.mdc + skills + workflows)
     copilot      GitHub Copilot (.github/copilot-instructions.md)
     claude       Claude Code (CLAUDE.md)
-    codex        OpenAI Codex (AGENTS.md)
+    codex        OpenAI Codex (AGENTS.md + .agents/)
     antigravity  Google Antigravity (AGENTS.md + .agents/)
     gemini       Gemini CLI / Code Assist (GEMINI.md)
     windsurf     Windsurf (.windsurfrules)
@@ -100,8 +100,8 @@ function Read-AgentsMd-Generic {
 function Read-AgentsMd-Codex {
     # Read AGENTS.md and replace Cursor-specific paths with Codex-specific paths
     $content = Get-Content $AgentsMd -Raw -Encoding UTF8
-    $content = $content -replace '\.cursor/rules/', '.codex/rules/'
-    $content = $content -replace '\.cursor/skills/', '.codex/skills/'
+    $content = $content -replace '\.cursor/rules/', '.agents/rules/'
+    $content = $content -replace '\.cursor/skills/', '.agents/skills/'
     $content = $content -replace '\.mdc', '.md'
     return $content
 }
@@ -223,13 +223,13 @@ function Generate-Claude {
 }
 
 function Generate-Codex {
-    Write-Host "[Codex] Generating AGENTS.md + .codex/rules/ + .codex/skills/ ..." -ForegroundColor Yellow
+    Write-Host "[Codex] Generating AGENTS.md + .agents/ ..." -ForegroundColor Yellow
 
     $outFile = Join-Path $TargetDir "AGENTS.md"
     $content = Read-AgentsMd-Codex
 
     # Copy rule files (strip cursor frontmatter, use .md)
-    $outRules = Join-Path $TargetDir ".codex\rules"
+    $outRules = Join-Path $TargetDir ".agents\rules"
     Ensure-Dir $outRules
 
     foreach ($rule in Get-ChildItem "$RulesDir\*.mdc" | Sort-Object Name) {
@@ -239,13 +239,21 @@ function Generate-Codex {
     }
 
     # Skills
-    $outSkills = Join-Path $TargetDir ".codex\skills"
+    $outSkills = Join-Path $TargetDir ".agents\skills"
     if (Test-Path $SkillsDir) {
-        Copy-Item $SkillsDir $outSkills -Recurse -Force
+        Ensure-Dir $outSkills
+        Copy-Item "$SkillsDir\*" $outSkills -Recurse -Force
+    }
+
+    # Workflows
+    $outWorkflows = Join-Path $TargetDir ".agents\workflows"
+    if (Test-Path $WorkflowsDir) {
+        Ensure-Dir $outWorkflows
+        Copy-Item "$WorkflowsDir\*" $outWorkflows -Force
     }
 
     $content | Set-Content $outFile -Encoding UTF8
-    Write-Host "  -> $outFile + $outRules ($(( Get-ChildItem $outRules).Count) rules) + .codex\skills" -ForegroundColor Green
+    Write-Host "  -> $outFile + .agents\ ($(( Get-ChildItem $outRules).Count) rules + skills + workflows)" -ForegroundColor Green
 }
 
 function Generate-Antigravity {
@@ -268,7 +276,8 @@ function Generate-Antigravity {
     # Skills (Keep YAML frontmatter)
     $outSkills = Join-Path $TargetDir ".agents\skills"
     if (Test-Path $SkillsDir) {
-        Copy-Item $SkillsDir $outSkills -Recurse -Force
+        Ensure-Dir $outSkills
+        Copy-Item "$SkillsDir\*" $outSkills -Recurse -Force
     }
 
     # Workflows

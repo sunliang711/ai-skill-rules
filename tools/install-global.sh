@@ -39,7 +39,7 @@ show_help() {
     ./tools/install-global.sh <platform>
 
   Supported Platforms:
-    codex         Install to \$CODEX_HOME or ~/.codex
+    codex         Install AGENTS.md to \$CODEX_HOME or ~/.codex, skills to ~/.agents/skills
     cursor        Install to ~/.cursor
     claude        Install to ~/.claude
     claudecode    Alias of claude
@@ -47,6 +47,7 @@ show_help() {
 
   Optional Environment Variables:
     CODEX_HOME    Override Codex home directory
+    AGENTS_HOME   Override Agent Skills home directory
     CURSOR_HOME   Override Cursor home directory
     CLAUDE_HOME   Override Claude Code home directory
 
@@ -233,10 +234,11 @@ EOF
 
 install_codex() {
     local codex_home="${CODEX_HOME:-$HOME/.codex}"
+    local agents_home="${AGENTS_HOME:-$HOME/.agents}"
     local install_root="$codex_home/ai-rules-skills"
     local rules_out="$install_root/rules"
     local workflows_out="$install_root/workflows"
-    local skills_out="$codex_home/skills"
+    local skills_out="$agents_home/skills"
     local agents_file="$codex_home/AGENTS.md"
     local block_file
 

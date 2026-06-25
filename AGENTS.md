@@ -6,8 +6,8 @@
 >
 > 说明：本仓库是规则/Skills/Workflows 的**源码仓**。仓库内维护的原始目录为 `rules/`、`skills/`、`workflows/`；面向具体 AI 平台使用时：
 >
-> - 可通过 `tools/generate-for-platform.sh` 或 `tools/generate-for-platform.ps1` 生成到目标项目中的 `.cursor/`、`.agents/`、`.codex/` 等目录
-> - 也可通过 `tools/install-global.sh` 或 `tools/install-global.ps1` 安装到 `~/.codex`、`~/.claude`、`~/.cursor` 等全局目录
+> - 可通过 `tools/generate-for-platform.sh` 或 `tools/generate-for-platform.ps1` 生成到目标项目中的 `.cursor/`、`.agents/` 等目录；Codex 使用项目根 `AGENTS.md` 与 `.agents/skills/`
+> - 也可通过 `tools/install-global.sh` 或 `tools/install-global.ps1` 安装到 `~/.codex` + `~/.agents`、`~/.claude`、`~/.cursor` 等全局目录
 
 ---
 
@@ -16,7 +16,7 @@
 > 在本仓库中，规则源码位于 `rules/` 目录；可按两种方式落地：
 >
 > - **项目级生成**：生成到 Cursor 项目的 `.cursor/rules/` 等目录，并根据 `alwaysApply` 和 `globs` 配置自动激活
-> - **全局安装**：安装到 `~/.codex`、`~/.claude`、`~/.cursor` 下，供对应工具在全局范围复用
+> - **全局安装**：Codex 安装到 `~/.codex` + `~/.agents`，其他平台安装到 `~/.claude`、`~/.cursor` 下，供对应工具在全局范围复用
 
 | 文件 | 适用范围 | 激活方式 | 核心内容 |
 |------|---------|---------|---------|
@@ -49,7 +49,7 @@
 
 ## 二、流程体系（Skills）
 
-> 在本仓库中，Skill 源码位于 `skills/` 目录；既可以生成到项目目录中的 `.cursor/skills/`、`.codex/skills/` 等位置，也可以安装到工具的全局 Skills 目录中供长期复用。
+> 在本仓库中，Skill 源码位于 `skills/` 目录；既可以生成到项目目录中的 `.cursor/skills/`、`.agents/skills/` 等位置，也可以安装到工具的全局 Skills 目录中供长期复用。
 
 | Skill | 触发场景 | 前置依赖 | 核心流程 |
 |-------|---------|---------|---------|
