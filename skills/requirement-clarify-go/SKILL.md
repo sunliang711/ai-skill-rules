@@ -9,7 +9,8 @@ description: Go 需求澄清协议。用于 Go 功能开发、Bug 修复、代�
 
 - 涉及生成或修改代码时，每个函数 / 方法都必须添加注释，说明其功能和适用场景。
 - 关键业务流程、复杂分支、异常处理、副作用、并发、权限、外部调用等关键部分必须添加必要注释。
-- 注释必须沿用目标文件已有风格，保持简洁准确，避免重复描述代码本身。
+- 新增或修改的代码注释统一使用英文；注释格式沿用目标文件已有风格，保持简洁准确，避免重复描述代码本身。
+- 修改代码时保留已有注释，不翻译或移动与本次修改无关的注释。
 
 > 本协议被以下 Go Skill 引用：`feature-dev-go`、`feature-dev-go-orchestrated`、`bug-fix-go`、`refactor-go`、`code-review-go`、`deploy-doc-go`、`api-doc-go`、`testing-go`、`dev-review-go-orchestrated`
 >

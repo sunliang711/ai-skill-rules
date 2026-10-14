@@ -34,6 +34,8 @@
 
 `skills/` 目录存放可被 AI 按需调用的 SOP：
 
+涉及代码的 Skill 要求新增或修改的代码注释使用英文，保留与当前修改无关的已有注释；沟通和文档说明仍使用简体中文。
+
 | Skill | 作用 |
 |------|------|
 | [`skills/requirement-clarify-java/SKILL.md`](skills/requirement-clarify-java/SKILL.md) | Java 需求澄清协议，作为 Java 流程的前置环节 |
@@ -55,6 +57,7 @@
 | [`skills/api-doc-go/SKILL.md`](skills/api-doc-go/SKILL.md) | Go API 文档提取与生成流程，包含字段定义、错误码与 `curl` 示例 |
 | [`skills/dev-review-go/SKILL.md`](skills/dev-review-go/SKILL.md) | Go 开发或修复完成后自动衔接评审的组合流程 |
 | [`skills/dev-review-go-orchestrated/SKILL.md`](skills/dev-review-go-orchestrated/SKILL.md) | Go 多 Agent 开发加评审编排流程 |
+| [`skills/project-index/SKILL.md`](skills/project-index/SKILL.md) | 为已有项目生成或更新 `PROJECT_INDEX.md` 及主题下级索引 |
 | `skills/*-rust/` | Rust Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `api-doc` / `dev-review` |
 | `skills/*-python/` | Python Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `api-doc` / `dev-review` |
 | `skills/*-shell/` | Shell Skill 家族：`requirement-clarify` / `feature-dev` / `bug-fix` / `refactor` / `code-review` / `testing` / `deploy-doc` / `dev-review` |
@@ -149,6 +152,8 @@
 │   ├── feature-dev-go/
 │   │   └── SKILL.md
 │   ├── feature-dev-go-orchestrated/
+│   │   └── SKILL.md
+│   ├── project-index/
 │   │   └── SKILL.md
 │   ├── refactor-go/
 │   │   └── SKILL.md
